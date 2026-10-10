@@ -1,0 +1,54 @@
+@model IReadOnlyList<CasualDate.Models.DateCategory>
+
+@{
+    ViewData["Title"] = "Perfect Date";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Perfect Date</h1>
+    <p class="soft-copy">Edit the categories and choices used by the Perfect Date mini-game.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="PerfectDate" asp-action="Create">Add Category</a>
+        <a class="secondary-button" asp-controller="Game" asp-action="PerfectDate">Preview Perfect Date</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Enabled</th>
+                    <th>Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td>@category.Description</td>
+                        <td>@(category.IsEnabled ? "Yes" : "No")</td>
+                        <td>@category.DisplayOrder</td>
+                        <td class="table-actions">
+                            <a asp-controller="PerfectDate" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                            <form asp-controller="PerfectDate" asp-action="Delete" asp-route-id="@category.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

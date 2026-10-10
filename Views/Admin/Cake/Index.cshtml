@@ -1,0 +1,58 @@
+@model IReadOnlyList<CasualDate.Models.CakeItem>
+
+@{
+    ViewData["Title"] = "Cake Items";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Cake Items</h1>
+    <p class="soft-copy">Edit the bases, frostings, toppings, and decorations used by Bake a Cake.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Cake" asp-action="Create">Add Cake Item</a>
+        <a class="secondary-button" asp-controller="Game" asp-action="Cake">Preview Cake</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Score</th>
+                    <th>Enabled</th>
+                    <th>Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ItemType</td>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Score</td>
+                        <td>@(item.IsEnabled ? "Yes" : "No")</td>
+                        <td>@item.DisplayOrder</td>
+                        <td class="table-actions">
+                            <a asp-controller="Cake" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <form asp-controller="Cake" asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

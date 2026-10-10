@@ -1,0 +1,28 @@
+@model CasualDate.ViewModels.Player.IntroViewModel
+
+@{
+    ViewData["Title"] = "Invitation";
+}
+
+<section class="invitation-screen"
+         aria-labelledby="invitation-title"
+         style="--rose: @Model.PrimaryColor; --mint: @Model.SecondaryColor;"
+         data-no-disable-after="@Model.NoButtonDisableAfterClicks"
+         data-yes-growth-rate="@Model.YesButtonGrowthRate">
+    <div class="invitation-card">
+        <p class="eyebrow">@Model.GameTitle</p>
+        <h1 id="invitation-title">@Model.IntroMessage</h1>
+        <p class="soft-copy">@Model.IntroSubtitle</p>
+
+        <div class="date-buttons">
+            <a id="yesButton" class="primary-button" asp-controller="Home" asp-action="Menu">@Model.YesButtonText</a>
+            <button id="noButton" class="secondary-button" type="button">@Model.NoButtonText</button>
+        </div>
+
+        <p id="noMessage" class="no-message" aria-live="polite"></p>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/intro.js" asp-append-version="true"></script>
+}

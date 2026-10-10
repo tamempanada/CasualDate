@@ -1,0 +1,40 @@
+@model CasualDate.ViewModels.Player.FinalViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Final Message";
+    var requiredGamesJson = JsonSerializer.Serialize(Model.RequiredGameSlugs);
+}
+
+<section class="final-screen final-reward-screen"
+         data-required-games='@requiredGamesJson'
+         style="--rose: @Model.PrimaryColor; --mint: @Model.SecondaryColor;">
+    <div id="finalLockedPanel" class="final-panel locked-final" hidden>
+        <p class="eyebrow">@Model.GameTitle</p>
+        <h1>Almost there</h1>
+        <p id="finalLockedMessage">Complete every mini-game first, then come back for the final message.</p>
+        <a class="primary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+    </div>
+
+    <div id="finalUnlockedPanel" class="final-panel" hidden>
+        <p class="eyebrow">@Model.GameTitle</p>
+        <h1>@Model.FinalTitle</h1>
+        <p>@Model.FinalMessage</p>
+
+        <div class="final-memory-strip" aria-label="Completed date memories">
+            <span>Photobooth</span>
+            <span>Cake</span>
+            <span>Perfect Date</span>
+            <span>Quiz</span>
+        </div>
+
+        <div class="final-actions">
+            <a class="secondary-button" asp-controller="Home" asp-action="Menu">View Menu</a>
+            <button id="replayDateButton" class="primary-button" type="button">Replay Date Night</button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/player-progress.js" asp-append-version="true"></script>
+}

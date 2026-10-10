@@ -1,0 +1,96 @@
+@model CasualDate.ViewModels.Player.PerfectDateGameViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Perfect Date";
+    var resultRangesJson = JsonSerializer.Serialize(Model.ResultRanges);
+}
+
+<section class="perfect-date-page" data-result-ranges='@resultRangesJson'>
+    <div class="perfect-date-header">
+        <p class="eyebrow">Mini-game 3</p>
+        <h1>Perfect Date</h1>
+        <p class="soft-copy">Plan a date by choosing one option from each category, then reveal the date rating.</p>
+    </div>
+
+    <div class="perfect-date-layout">
+        <div class="date-plan-panel">
+            <div class="date-ticket" aria-live="polite">
+                <p class="eyebrow">Current plan</p>
+                <h2 id="datePlanTitle">Choose your date</h2>
+                <ul id="datePlanSummary">
+                    <li>No choices yet.</li>
+                </ul>
+                <div class="date-score">
+                    <span>Score</span>
+                    <strong id="dateScore">Hidden</strong>
+                </div>
+            </div>
+
+            <div class="date-actions">
+                <button id="previousDateStepButton" class="secondary-button" type="button">Back</button>
+                <button id="nextDateStepButton" class="primary-button" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="date-options-panel">
+            <div class="date-stepper" aria-label="Date planning steps">
+                @for (var index = 0; index < Model.Categories.Count; index++)
+                {
+                    <span class="@(index == 0 ? "active" : "")">@(index + 1)</span>
+                }
+            </div>
+
+            @for (var index = 0; index < Model.Categories.Count; index++)
+            {
+                var category = Model.Categories[index];
+                <div class="date-step @(index == 0 ? "active" : "")" data-date-step="@index">
+                    <h2>@category.Name</h2>
+                    <p>@category.Description</p>
+                    <div class="date-options">
+                        @foreach (var option in category.Options)
+                        {
+                            var optionImagePath = string.IsNullOrWhiteSpace(option.ImagePath)
+                                ? ""
+                                : Url.Content(option.ImagePath);
+
+                            <button class="date-option"
+                                    type="button"
+                                    data-choice-id="@option.Id"
+                                    data-choice-name="@option.Name"
+                                    data-choice-score="@option.Score"
+                                    data-choice-image="@optionImagePath">
+                                @if (!string.IsNullOrWhiteSpace(option.ImagePath))
+                                {
+                                    <img src="@Url.Content(option.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                                }
+                                <strong>@option.Name</strong>
+                                <span>@option.Description</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div id="dateResult" class="result-modal" hidden>
+                <div class="result-modal-card date-result">
+                    <p class="eyebrow">Your result</p>
+                    <h2 id="dateResultTitle">Date Rating</h2>
+                    <strong class="result-grade">
+                        <span id="dateAnimatedScore">0</span>
+                    </strong>
+                    <img id="dateResultImage" class="result-image" alt="" hidden />
+                    <p id="dateResultMessage"></p>
+                    <button id="completeDateButton" class="primary-button" type="button" data-complete-game="perfect-date">
+                        Complete Perfect Date
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/player-progress.js" asp-append-version="true"></script>
+    <script src="~/js/perfect-date.js" asp-append-version="true"></script>
+}

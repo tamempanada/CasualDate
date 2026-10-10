@@ -1,0 +1,50 @@
+@model CasualDate.ViewModels.Admin.MessageEditViewModel
+
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create Message" : "Edit Message";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>@ViewData["Title"]</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="MiniGameId">Assigned game</label>
+        <select asp-for="MiniGameId" asp-items="ViewBag.MiniGames"></select>
+
+        <label asp-for="Key"></label>
+        <input asp-for="Key" placeholder="final.reward" />
+        <span asp-validation-for="Key"></span>
+
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+
+        <label asp-for="Body"></label>
+        <textarea asp-for="Body" rows="7"></textarea>
+        <span asp-validation-for="Body"></span>
+
+        <label asp-for="ButtonText"></label>
+        <input asp-for="ButtonText" />
+        <span asp-validation-for="ButtonText"></span>
+
+        <label asp-for="DisplayOrder"></label>
+        <input asp-for="DisplayOrder" type="number" />
+        <span asp-validation-for="DisplayOrder"></span>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Message</button>
+            <a class="secondary-button" asp-controller="Messages" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

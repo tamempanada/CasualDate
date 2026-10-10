@@ -1,0 +1,84 @@
+@model CasualDate.ViewModels.Player.QuizGameViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Know Me Quiz";
+    var resultRangesJson = JsonSerializer.Serialize(Model.ResultRanges);
+}
+
+<section class="quiz-page" data-max-score="@Model.MaxScore" data-result-ranges='@resultRangesJson'>
+    <div class="quiz-header">
+        <p class="eyebrow">Mini-game 4</p>
+        <h1>How Well Do You Know Me?</h1>
+        <p class="soft-copy">Answer each question and reveal your score at the end.</p>
+    </div>
+
+    <div class="quiz-layout">
+        <div class="quiz-score-panel">
+            <p class="eyebrow">Quiz progress</p>
+            <h2 id="quizProgressTitle">Question 1 / @Model.Questions.Count</h2>
+            <div class="quiz-progress-track">
+                <span id="quizProgressBar"></span>
+            </div>
+            <div class="quiz-score">
+                <span>Score</span>
+                <strong><span id="quizScore">0</span> / @Model.MaxScore</strong>
+            </div>
+        </div>
+
+        <div class="quiz-question-panel">
+            @for (var index = 0; index < Model.Questions.Count; index++)
+            {
+                var question = Model.Questions[index];
+                <article class="quiz-question @(index == 0 ? "active" : "")" data-quiz-question="@index" data-question-points="@question.Points">
+                    <div class="quiz-question-meta">
+                        <span>@question.Difficulty</span>
+                        <span>@question.Points points</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(question.ImagePath))
+                    {
+                        <img class="quiz-question-image" src="@Url.Content(question.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                    }
+                    <h2>@question.QuestionText</h2>
+                    <div class="quiz-answers">
+                        @foreach (var answer in question.Answers)
+                        {
+                            <button class="quiz-answer" type="button" data-answer-correct="@answer.IsCorrect.ToString().ToLowerInvariant()">
+                                @if (!string.IsNullOrWhiteSpace(answer.ImagePath))
+                                {
+                                    <img src="@Url.Content(answer.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                                }
+                                <span>@answer.AnswerText</span>
+                            </button>
+                        }
+                    </div>
+                </article>
+            }
+
+            <div id="quizResult" class="result-modal" hidden>
+                <div class="result-modal-card quiz-result">
+                    <p class="eyebrow">Quiz result</p>
+                    <h2 id="quizResultTitle">Your score</h2>
+                    <strong class="result-grade">
+                        <span id="quizAnimatedScore">0</span> / @Model.MaxScore
+                    </strong>
+                    <img id="quizResultImage" class="result-image" alt="" hidden />
+                    <p id="quizResultMessage"></p>
+                    <button id="completeQuizButton" class="primary-button" type="button" data-complete-game="quiz">
+                        Complete Quiz
+                    </button>
+                </div>
+            </div>
+
+            <div class="quiz-actions">
+                <button id="previousQuizButton" class="secondary-button" type="button">Back</button>
+                <button id="nextQuizButton" class="primary-button" type="button">Next</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/player-progress.js" asp-append-version="true"></script>
+    <script src="~/js/quiz.js" asp-append-version="true"></script>
+}

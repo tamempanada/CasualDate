@@ -1,0 +1,48 @@
+@model CasualDate.ViewModels.Admin.MiniGameEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Game";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Edit Game</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Slug" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" rows="4"></textarea>
+        <span asp-validation-for="Description"></span>
+
+        <label asp-for="IconLabel"></label>
+        <input asp-for="IconLabel" />
+        <span asp-validation-for="IconLabel"></span>
+
+        <label asp-for="DisplayOrder"></label>
+        <input asp-for="DisplayOrder" type="number" />
+        <span asp-validation-for="DisplayOrder"></span>
+
+        <label class="checkbox-row">
+            <input asp-for="IsEnabled" />
+            <span>Show this game in the player menu</span>
+        </label>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Game</button>
+            <a class="secondary-button" asp-controller="Games" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,42 @@
+@model CasualDate.ViewModels.Admin.AdminUserCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Admin";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">SuperAdmin</p>
+    <h1>Create Admin</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" />
+        <span asp-validation-for="ConfirmPassword"></span>
+
+        <label class="checkbox-row">
+            <input asp-for="IsSuperAdmin" />
+            <span>Also make this user a SuperAdmin</span>
+        </label>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Create Admin</button>
+            <a class="secondary-button" asp-controller="Users" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

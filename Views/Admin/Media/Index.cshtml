@@ -1,0 +1,246 @@
+@model IReadOnlyList<CasualDate.Models.UploadedMedia>
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Media";
+    var uploadModel = ViewBag.UploadModel as CasualDate.ViewModels.Admin.MediaUploadViewModel
+        ?? new CasualDate.ViewModels.Admin.MediaUploadViewModel();
+    var miniGames = ViewBag.MiniGames as List<SelectListItem> ?? new List<SelectListItem>();
+    var albumCovers = ViewBag.AlbumCovers as List<SelectListItem> ?? new List<SelectListItem>();
+    var mediaUsages = ViewBag.MediaUsages as Dictionary<int, List<string>> ?? new Dictionary<int, List<string>>();
+    var fileExists = ViewBag.FileExists as Dictionary<int, bool> ?? new Dictionary<int, bool>();
+    var statusKind = TempData["StatusKind"] as string;
+    var gameNamesById = miniGames
+        .Where(game => !string.IsNullOrWhiteSpace(game.Value))
+        .ToDictionary(game => game.Value, game => game.Text);
+    var imagePaths = Model
+        .Where(media => media.MediaType == CasualDate.Models.MediaType.Image
+            && (!fileExists.TryGetValue(media.Id, out var imageExists) || imageExists))
+        .ToDictionary(media => media.Id, media => Url.Content(media.FilePath));
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Media Organizer</h1>
+    <p class="soft-copy">Upload, preview, and track where every image or song is used.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message @(statusKind == "error" ? "error-message" : "")">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="secondary-button" href="/admin/settings">Open Settings</a>
+        <a class="secondary-button" asp-controller="Home" asp-action="Index">Preview Player</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <form class="upload-panel" asp-controller="Media" asp-action="Upload" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <label class="drop-zone" for="mediaFile">
+            <span>Drag media here</span>
+            <strong>or browse files</strong>
+            <small>Images: jpg, png, webp, gif. Audio: mp3, wav, ogg, m4a.</small>
+        </label>
+        <input id="mediaFile" name="File" type="file" />
+
+        <div class="upload-fields">
+            <div>
+                <label for="DisplayName">Display name</label>
+                <input id="DisplayName" name="DisplayName" />
+            </div>
+            <div>
+                <label for="Category">Category</label>
+                <input id="Category" name="Category" placeholder="background, cake, quiz" />
+            </div>
+            <div>
+                <label for="MiniGameId">Assigned game</label>
+                <select id="MiniGameId" name="MiniGameId" asp-items="ViewBag.MiniGames"></select>
+            </div>
+        </div>
+
+        <button class="primary-button" type="submit">Upload Media</button>
+    </form>
+
+    <div class="media-organizer-toolbar" aria-label="Media organizer filters">
+        <div class="media-tabs" role="tablist" aria-label="Media categories">
+            <button class="active" type="button" data-media-filter="all">All</button>
+            <button type="button" data-media-filter="general-images">General Images</button>
+            <button type="button" data-media-filter="game-images">Game Images</button>
+            <button type="button" data-media-filter="music">Background Music</button>
+        </div>
+        <label class="media-search">
+            <span>Search media</span>
+            <input id="mediaSearchInput" type="search" placeholder="Search media..." autocomplete="off" />
+        </label>
+    </div>
+
+    <div class="media-grid" data-media-grid>
+        @foreach (var item in Model)
+        {
+            var mediaGameItems = miniGames
+                .Select(game => new SelectListItem
+                {
+                    Value = game.Value,
+                    Text = game.Text,
+                    Selected = item.MiniGameId?.ToString() == game.Value || (!item.MiniGameId.HasValue && string.IsNullOrEmpty(game.Value))
+                })
+                .ToList();
+            var albumCoverItems = albumCovers
+                .Select(cover => new SelectListItem
+                {
+                    Value = cover.Value,
+                    Text = cover.Text,
+                    Selected = item.AlbumCoverMediaId?.ToString() == cover.Value || (!item.AlbumCoverMediaId.HasValue && string.IsNullOrEmpty(cover.Value))
+                })
+                .ToList();
+            var fileSize = item.FileSizeBytes >= 1024 * 1024
+                ? $"{item.FileSizeBytes / 1024d / 1024d:0.0} MB"
+                : $"{Math.Max(1, item.FileSizeBytes / 1024)} KB";
+            var dimensions = item.Width.HasValue && item.Height.HasValue
+                ? $"{item.Width} x {item.Height}"
+                : item.MediaType.ToString();
+            var itemUsages = mediaUsages.TryGetValue(item.Id, out var usages)
+                ? usages
+                : new List<string>();
+            var hasFile = !fileExists.TryGetValue(item.Id, out var exists) || exists;
+            var assignedGame = item.MiniGameId.HasValue && gameNamesById.TryGetValue(item.MiniGameId.Value.ToString(), out var gameName)
+                ? gameName
+                : "";
+            var organizerType = item.MediaType == CasualDate.Models.MediaType.Audio
+                ? "music"
+                : string.IsNullOrWhiteSpace(assignedGame)
+                    ? "general-images"
+                    : "game-images";
+            var searchText = string.Join(" ", new[]
+            {
+                item.DisplayName,
+                item.OriginalFileName,
+                item.Category,
+                assignedGame,
+                item.MediaType.ToString()
+            }.Concat(itemUsages)).ToLowerInvariant();
+
+            <article class="media-card @(item.MediaType == CasualDate.Models.MediaType.Audio ? "music-media-card" : "")"
+                     data-media-card
+                     data-media-type="@organizerType"
+                     data-media-search="@searchText">
+                @if (item.MediaType == CasualDate.Models.MediaType.Image)
+                {
+                    @if (hasFile)
+                    {
+                        <img src="@Url.Content(item.FilePath)" alt="@item.DisplayName" />
+                    }
+                    else
+                    {
+                        <div class="missing-media-preview">Missing image file</div>
+                    }
+                }
+                else
+                {
+                    <div class="audio-media-preview">
+                        @if (item.AlbumCoverMediaId.HasValue && imagePaths.TryGetValue(item.AlbumCoverMediaId.Value, out var coverPath))
+                        {
+                            <img class="media-album-cover" src="@coverPath" alt="@item.DisplayName album cover" />
+                        }
+                        else
+                        {
+                            <div class="audio-preview">Audio</div>
+                        }
+                        @if (hasFile)
+                        {
+                            <audio controls src="@Url.Content(item.FilePath)"></audio>
+                        }
+                        else
+                        {
+                            <div class="missing-media-preview compact">Missing audio file</div>
+                        }
+                    </div>
+                }
+                <div class="media-card-meta">
+                    <strong>@item.DisplayName</strong>
+                    <small>@(string.IsNullOrWhiteSpace(item.Category) ? "Uncategorized" : item.Category)</small>
+                    @if (!string.IsNullOrWhiteSpace(assignedGame))
+                    {
+                        <small>@assignedGame</small>
+                    }
+                    <small>@dimensions · @fileSize</small>
+                    <small title="@item.OriginalFileName">@item.OriginalFileName</small>
+                    @if (itemUsages.Count > 0)
+                    {
+                        <div class="media-usage-list">
+                            <span>Used by</span>
+                            @foreach (var usage in itemUsages.Take(3))
+                            {
+                                <small>@usage</small>
+                            }
+                            @if (itemUsages.Count > 3)
+                            {
+                                <small>+ @(itemUsages.Count - 3) more</small>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <small class="media-unused">Not currently used</small>
+                    }
+                    @if (!hasFile)
+                    {
+                        <small class="media-missing-file">Stored file is missing. This record can still be deleted if unused.</small>
+                    }
+                </div>
+
+                <div class="media-card-actions">
+                    @if (hasFile)
+                    {
+                        <a href="@Url.Content(item.FilePath)" target="_blank" rel="noopener">Open</a>
+                    }
+                    <details class="media-edit-details">
+                        <summary>Edit</summary>
+                        <form class="media-edit-form" asp-controller="Media" asp-action="Update" asp-route-id="@item.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <input name="Id" type="hidden" value="@item.Id" />
+                            <label>
+                                <span>Name</span>
+                                <input name="DisplayName" value="@item.DisplayName" />
+                            </label>
+                            <label>
+                                <span>Category</span>
+                                <input name="Category" value="@item.Category" />
+                            </label>
+                            <label>
+                                <span>Game</span>
+                                <select name="MiniGameId" asp-items="mediaGameItems"></select>
+                            </label>
+                            @if (item.MediaType == CasualDate.Models.MediaType.Audio)
+                            {
+                                <label>
+                                    <span>Album cover</span>
+                                    <select name="AlbumCoverMediaId" asp-items="albumCoverItems"></select>
+                                </label>
+                            }
+                            <button type="submit">Save</button>
+                        </form>
+                    </details>
+                    <form asp-controller="Media" asp-action="Delete" asp-route-id="@item.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        @if (itemUsages.Count > 0)
+                        {
+                            <button type="submit" disabled title="Replace or remove this media where it is used before deleting.">Delete</button>
+                        }
+                        else
+                        {
+                            <button type="submit">Delete</button>
+                        }
+                    </form>
+                </div>
+            </article>
+        }
+    </div>
+    <p class="media-empty-state" data-media-empty hidden>No media matches this view.</p>
+</section>
+
+@section Scripts {
+    <script src="~/js/admin/media-upload.js" asp-append-version="true"></script>
+}

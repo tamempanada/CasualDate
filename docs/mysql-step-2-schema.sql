@@ -1,0 +1,257 @@
+CREATE DATABASE IF NOT EXISTS casual_date
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE casual_date;
+
+CREATE TABLE IF NOT EXISTS MiniGames (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  Slug VARCHAR(80) NOT NULL UNIQUE,
+  Name VARCHAR(120) NOT NULL,
+  Description VARCHAR(400) NOT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
+  IconLabel VARCHAR(40) NOT NULL,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS UploadedMedia (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  MiniGameId INT NULL,
+  OriginalFileName VARCHAR(255) NOT NULL,
+  StoredFileName VARCHAR(255) NOT NULL,
+  FilePath VARCHAR(500) NOT NULL,
+  ContentType VARCHAR(120) NOT NULL,
+  MediaType INT NOT NULL,
+  Category VARCHAR(80) NOT NULL,
+  DisplayName VARCHAR(120) NOT NULL,
+  FileSizeBytes BIGINT NOT NULL,
+  Width INT NULL,
+  Height INT NULL,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_UploadedMedia_MiniGames
+    FOREIGN KEY (MiniGameId) REFERENCES MiniGames(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS GameSettings (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  GameTitle VARCHAR(120) NOT NULL,
+  GirlfriendName VARCHAR(80) NOT NULL,
+  PlayerName VARCHAR(80) NOT NULL,
+  NicknamesJson JSON NOT NULL,
+  IntroMessage VARCHAR(500) NOT NULL,
+  IntroSubtitle VARCHAR(500) NOT NULL,
+  MainMenuMessage VARCHAR(500) NOT NULL,
+  YesButtonText VARCHAR(40) NOT NULL,
+  NoButtonText VARCHAR(40) NOT NULL,
+  NoButtonDisableAfterClicks INT NOT NULL,
+  YesButtonGrowthRate DECIMAL(4,2) NOT NULL,
+  FinalTitle VARCHAR(160) NOT NULL,
+  FinalMessage TEXT NOT NULL,
+  PrimaryColor VARCHAR(20) NOT NULL,
+  SecondaryColor VARCHAR(20) NOT NULL,
+  BackgroundMediaId INT NULL,
+  MusicMediaId INT NULL,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_GameSettings_BackgroundMedia
+    FOREIGN KEY (BackgroundMediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL,
+  CONSTRAINT FK_GameSettings_MusicMedia
+    FOREIGN KEY (MusicMediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS Messages (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  MiniGameId INT NULL,
+  `Key` VARCHAR(120) NOT NULL,
+  Title VARCHAR(160) NOT NULL,
+  Body TEXT NOT NULL,
+  ButtonText VARCHAR(80) NOT NULL,
+  MediaId INT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_Messages_MiniGames
+    FOREIGN KEY (MiniGameId) REFERENCES MiniGames(Id)
+    ON DELETE CASCADE,
+  CONSTRAINT FK_Messages_UploadedMedia
+    FOREIGN KEY (MediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS ResultRanges (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  MiniGameId INT NOT NULL,
+  MinScore INT NOT NULL,
+  MaxScore INT NOT NULL,
+  Title VARCHAR(160) NOT NULL,
+  Message TEXT NOT NULL,
+  MediaId INT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_ResultRanges_MiniGames
+    FOREIGN KEY (MiniGameId) REFERENCES MiniGames(Id)
+    ON DELETE CASCADE,
+  CONSTRAINT FK_ResultRanges_UploadedMedia
+    FOREIGN KEY (MediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS DateCategories (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  Name VARCHAR(120) NOT NULL,
+  Description VARCHAR(400) NOT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS DateOptions (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  DateCategoryId INT NOT NULL,
+  Name VARCHAR(120) NOT NULL,
+  Description VARCHAR(400) NOT NULL,
+  Score INT NOT NULL DEFAULT 0,
+  MediaId INT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_DateOptions_DateCategories
+    FOREIGN KEY (DateCategoryId) REFERENCES DateCategories(Id)
+    ON DELETE CASCADE,
+  CONSTRAINT FK_DateOptions_UploadedMedia
+    FOREIGN KEY (MediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS CakeItems (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ItemType INT NOT NULL,
+  Name VARCHAR(120) NOT NULL,
+  Description VARCHAR(400) NOT NULL,
+  Score INT NOT NULL DEFAULT 0,
+  MediaId INT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_CakeItems_UploadedMedia
+    FOREIGN KEY (MediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS CakeRules (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  Name VARCHAR(120) NOT NULL,
+  BaseItemId INT NULL,
+  FrostingItemId INT NULL,
+  ToppingItemId INT NULL,
+  DecorationItemId INT NULL,
+  BonusScore INT NOT NULL DEFAULT 0,
+  ResultTitle VARCHAR(160) NOT NULL,
+  ResultMessage TEXT NOT NULL,
+  IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_CakeRules_Base
+    FOREIGN KEY (BaseItemId) REFERENCES CakeItems(Id)
+    ON DELETE SET NULL,
+  CONSTRAINT FK_CakeRules_Frosting
+    FOREIGN KEY (FrostingItemId) REFERENCES CakeItems(Id)
+    ON DELETE SET NULL,
+  CONSTRAINT FK_CakeRules_Topping
+    FOREIGN KEY (ToppingItemId) REFERENCES CakeItems(Id)
+    ON DELETE SET NULL,
+  CONSTRAINT FK_CakeRules_Decoration
+    FOREIGN KEY (DecorationItemId) REFERENCES CakeItems(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS QuizQuestions (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  QuestionText TEXT NOT NULL,
+  QuestionType INT NOT NULL,
+  Difficulty VARCHAR(40) NOT NULL,
+  Points INT NOT NULL DEFAULT 1,
+  MediaId INT NULL,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  IsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_QuizQuestions_UploadedMedia
+    FOREIGN KEY (MediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS QuizAnswers (
+  Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  QuizQuestionId INT NOT NULL,
+  AnswerText VARCHAR(300) NOT NULL,
+  MediaId INT NULL,
+  IsCorrect BOOLEAN NOT NULL DEFAULT FALSE,
+  DisplayOrder INT NOT NULL DEFAULT 0,
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT FK_QuizAnswers_QuizQuestions
+    FOREIGN KEY (QuizQuestionId) REFERENCES QuizQuestions(Id)
+    ON DELETE CASCADE,
+  CONSTRAINT FK_QuizAnswers_UploadedMedia
+    FOREIGN KEY (MediaId) REFERENCES UploadedMedia(Id)
+    ON DELETE SET NULL
+);
+
+INSERT INTO MiniGames (Slug, Name, Description, DisplayOrder, IsEnabled, IconLabel)
+VALUES
+  ('photobooth', 'Photobooth', 'Take a sweet photo strip together.', 1, TRUE, 'Photo'),
+  ('cake', 'Bake a Cake', 'Build a cake and get a funny love rating.', 2, TRUE, 'Cake'),
+  ('perfect-date', 'Perfect Date', 'Plan the ideal date from cozy choices.', 3, TRUE, 'Date'),
+  ('quiz', 'How Well Do You Know Me?', 'Answer personal questions and unlock a result.', 4, TRUE, 'Quiz')
+ON DUPLICATE KEY UPDATE
+  Name = VALUES(Name),
+  Description = VALUES(Description),
+  DisplayOrder = VALUES(DisplayOrder),
+  IsEnabled = VALUES(IsEnabled),
+  IconLabel = VALUES(IconLabel);
+
+INSERT INTO GameSettings (
+  GameTitle,
+  GirlfriendName,
+  PlayerName,
+  NicknamesJson,
+  IntroMessage,
+  IntroSubtitle,
+  MainMenuMessage,
+  YesButtonText,
+  NoButtonText,
+  NoButtonDisableAfterClicks,
+  YesButtonGrowthRate,
+  FinalTitle,
+  FinalMessage,
+  PrimaryColor,
+  SecondaryColor
+)
+SELECT
+  'Casual Date',
+  'Ali',
+  '',
+  JSON_ARRAY(),
+  'Would you like to go on a date with me, {name}?',
+  'A tiny date night made of photos, cake, questions, and favorite memories.',
+  'Welcome to our little date.',
+  'YES',
+  'NO',
+  8,
+  0.28,
+  'You completed our date',
+  'This final message will be customized from the admin dashboard.',
+  '#d84f6f',
+  '#7bb8a5'
+WHERE NOT EXISTS (SELECT 1 FROM GameSettings);

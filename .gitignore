@@ -1,0 +1,33 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.json
+
+# Local databases
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Private, user-uploaded gift media
+wwwroot/uploads/audio/*
+!wwwroot/uploads/audio/.gitkeep
+wwwroot/uploads/images/*
+!wwwroot/uploads/images/.gitkeep

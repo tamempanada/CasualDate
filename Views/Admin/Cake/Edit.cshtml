@@ -1,0 +1,64 @@
+@model CasualDate.ViewModels.Admin.CakeItemEditViewModel
+
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create Cake Item" : "Edit Cake Item";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>@ViewData["Title"]</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="ItemType"></label>
+                <select asp-for="ItemType" asp-items="Html.GetEnumSelectList<CasualDate.Models.CakeItemType>()"></select>
+                <span asp-validation-for="ItemType"></span>
+            </div>
+            <div>
+                <label asp-for="Name"></label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name"></span>
+            </div>
+            <div>
+                <label asp-for="Score"></label>
+                <input asp-for="Score" type="number" />
+                <span asp-validation-for="Score"></span>
+            </div>
+            <div>
+                <label asp-for="DisplayOrder"></label>
+                <input asp-for="DisplayOrder" type="number" />
+                <span asp-validation-for="DisplayOrder"></span>
+            </div>
+            <div>
+                <label asp-for="MediaId">Optional image</label>
+                <select asp-for="MediaId" asp-items="ViewBag.ImageMediaItems"></select>
+                <span asp-validation-for="MediaId"></span>
+            </div>
+        </div>
+
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" rows="4"></textarea>
+        <span asp-validation-for="Description"></span>
+
+        <label class="checkbox-row">
+            <input asp-for="IsEnabled" />
+            <span>Enabled</span>
+        </label>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Cake Item</button>
+            <a class="secondary-button" asp-controller="Cake" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

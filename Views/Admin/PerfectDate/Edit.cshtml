@@ -1,0 +1,98 @@
+@model CasualDate.ViewModels.Admin.DateCategoryEditViewModel
+
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create Date Category" : "Edit Date Category";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>@ViewData["Title"]</h1>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <p class="status-message error-message">Perfect Date was not saved. Fix the errors below and try again.</p>
+    }
+
+    <form class="admin-form wide-form" method="post" novalidate>
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="All" class="validation-summary"></div>
+
+        <label asp-for="Name"></label>
+        <input asp-for="Name" placeholder="Where should we go?" />
+        <span asp-validation-for="Name"></span>
+
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" rows="3"></textarea>
+        <span asp-validation-for="Description"></span>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="DisplayOrder"></label>
+                <input asp-for="DisplayOrder" type="number" />
+                <span asp-validation-for="DisplayOrder"></span>
+            </div>
+            <label class="checkbox-row">
+                <input asp-for="IsEnabled" />
+                <span>Enabled</span>
+            </label>
+        </div>
+
+        <div class="date-option-editor">
+            <h2>Options</h2>
+            <p class="soft-copy">Fill at least two options. Empty option names are ignored.</p>
+
+            @for (var index = 0; index < Model.Options.Count; index++)
+            {
+                <div class="date-option-row">
+                    <input asp-for="Options[index].Id" type="hidden" />
+                    <input asp-for="Options[index].DisplayOrder" type="hidden" />
+                    <label>
+                        <span>Name</span>
+                        <input asp-for="Options[index].Name" placeholder="Option @(index + 1)" />
+                        <span asp-validation-for="Options[index].Name"></span>
+                    </label>
+                    <label>
+                        <span>Description</span>
+                        <input asp-for="Options[index].Description" />
+                        <span asp-validation-for="Options[index].Description"></span>
+                    </label>
+                    <label>
+                        <span>Score</span>
+                        <input asp-for="Options[index].Score" type="number" />
+                        <span asp-validation-for="Options[index].Score"></span>
+                    </label>
+                    <label>
+                        <span>Image</span>
+                        <select asp-for="Options[index].MediaId" asp-items="ViewBag.ImageMediaItems"></select>
+                        @if (!string.IsNullOrWhiteSpace(Model.Options[index].ImagePath))
+                        {
+                            <img class="date-option-admin-preview" src="@Url.Content(Model.Options[index].ImagePath)" alt="" loading="lazy" />
+                        }
+                        <span asp-validation-for="Options[index].MediaId"></span>
+                    </label>
+                    <label class="checkbox-row">
+                        <input asp-for="Options[index].IsEnabled" />
+                        <span>Enabled</span>
+                    </label>
+                </div>
+            }
+        </div>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Category</button>
+            <a class="secondary-button" asp-controller="PerfectDate" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

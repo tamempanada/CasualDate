@@ -1,0 +1,78 @@
+@model CasualDate.ViewModels.Player.MenuViewModel
+
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<section class="menu-screen"
+         aria-labelledby="menu-title"
+         style="--rose: @Model.PrimaryColor; --mint: @Model.SecondaryColor;">
+    <div class="menu-header">
+        <div class="menu-title-block">
+            <p class="eyebrow">@Model.WelcomeMessage</p>
+            <h1 id="menu-title">@Model.GameTitle</h1>
+            <p class="menu-subtitle">Choose the next little chapter and keep the date moving.</p>
+        </div>
+
+        <div class="progress-panel" aria-label="Game progress">
+            <div class="progress-copy">
+                <span>Your date</span>
+                <strong id="progressSummary">0 / @Model.Games.Count completed</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+                <span id="progressBar"></span>
+            </div>
+            <div class="progress-dots" aria-hidden="true">
+                @foreach (var game in Model.Games)
+                {
+                    <span data-progress-dot="@game.Slug"></span>
+                }
+            </div>
+            <p id="progressHint" class="progress-hint" aria-live="polite">Pick a mini-game to begin.</p>
+        </div>
+    </div>
+
+    @if (Model.Games.Count == 0)
+    {
+        <div class="menu-empty-state" role="status">
+            <span>No mini-games yet</span>
+            <strong>The date board is empty.</strong>
+            <p>Add or enable mini-games in the hidden admin area, then come back here.</p>
+        </div>
+    }
+    else
+    {
+        <div class="game-grid" aria-label="Mini-games">
+            @foreach (var game in Model.Games)
+            {
+                <a class="game-card" asp-controller="Game" asp-action="@game.ActionName" data-game-card="@game.Slug">
+                    <div class="game-card-top">
+                        <span class="game-icon">@game.IconLabel</span>
+                        <span class="next-game-label" hidden>Next up</span>
+                    </div>
+                    <div class="game-copy">
+                        <strong>@game.Name</strong>
+                        <small>@game.Description</small>
+                    </div>
+                    <div class="game-card-footer">
+                        <em class="completion-label">Not completed</em>
+                        <span class="game-action-label">Play</span>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    <div class="menu-actions">
+        <a id="finalRewardLink" class="final-reward-link locked" asp-controller="Game" asp-action="Final" aria-disabled="true">
+            <span>Final reward</span>
+            <strong id="finalRewardText">Complete every game to unlock this.</strong>
+            <small id="finalRewardHint">A sweet ending waits here.</small>
+        </a>
+        <button id="resetProgressButton" class="secondary-button" type="button">Reset Progress</button>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/player-progress.js" asp-append-version="true"></script>
+}

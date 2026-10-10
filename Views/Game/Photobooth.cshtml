@@ -1,0 +1,70 @@
+@model CasualDate.ViewModels.Player.PhotoboothGameViewModel
+
+@{
+    ViewData["Title"] = "Photobooth";
+}
+
+<section class="photobooth-page"
+         data-photo-count="4"
+         data-completion-heading="@Model.CompletionHeading"
+         data-completion-subheading="@Model.CompletionSubheading">
+    <div class="photobooth-header">
+        <p class="eyebrow">Mini-game 1</p>
+        <h1>Photobooth</h1>
+        <p class="soft-copy">Take four little snapshots and turn them into a printable photo strip.</p>
+    </div>
+
+    <div class="photobooth-layout">
+        <div class="camera-panel">
+            <div class="camera-frame">
+                <video id="cameraPreview" autoplay playsinline muted></video>
+                <canvas id="captureCanvas" hidden></canvas>
+                <div id="cameraFallback" class="camera-fallback" hidden>
+                    <strong>Camera unavailable</strong>
+                    <span>You can still generate a cute placeholder strip.</span>
+                </div>
+                <div id="countdownOverlay" class="countdown-overlay" aria-live="polite"></div>
+                <div id="flashOverlay" class="flash-overlay"></div>
+            </div>
+
+            <div class="photobooth-controls">
+                <button id="startCameraButton" class="secondary-button" type="button">Start Camera</button>
+                <button id="takePhotoButton" class="primary-button" type="button" disabled>Take Photo</button>
+                <button id="useFallbackButton" class="secondary-button" type="button">Use Placeholder</button>
+            </div>
+
+            <p id="photoboothStatus" class="photobooth-status" aria-live="polite">
+                Camera access works on localhost or HTTPS.
+            </p>
+        </div>
+
+        <aside class="strip-panel">
+            <h2>Your Strip</h2>
+            <canvas id="stripCanvas" class="strip-canvas" width="600" height="1800"></canvas>
+            <div class="photobooth-controls">
+                <button id="downloadStripButton" class="primary-button" type="button" disabled>Save Photo Strip</button>
+                <button id="retakeStripButton" class="secondary-button" type="button">Retake</button>
+            </div>
+            <button id="completePhotoboothButton" class="primary-button" type="button" disabled>
+                Show Completion
+            </button>
+        </aside>
+    </div>
+
+    <div id="photoboothCompletion" class="result-modal" hidden>
+        <div class="result-modal-card photobooth-completion">
+            <p class="eyebrow">Photobooth complete</p>
+            <h2 id="photoboothCompletionHeading">@Model.CompletionHeading</h2>
+            <img id="photoboothCompletionImage" alt="Completed photobooth strip" />
+            <p id="photoboothCompletionSubheading">@Model.CompletionSubheading</p>
+            <button class="primary-button" type="button" data-complete-game="photobooth">
+                Complete Photobooth
+            </button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/photobooth.js" asp-append-version="true"></script>
+    <script src="~/js/player-progress.js" asp-append-version="true"></script>
+}

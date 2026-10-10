@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Casual Date Admin</p>
+    <h1>Editor Dashboard</h1>
+    <p>
+        This dashboard is protected by ASP.NET Core Identity. The next admin pages will let you edit
+        settings, uploaded media, messages, and mini-game content.
+    </p>
+
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        @Html.AntiForgeryToken()
+        <button class="secondary-button" type="submit">Log out</button>
+    </form>
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Home" asp-action="Index">Preview Intro</a>
+        <a class="secondary-button" asp-controller="Home" asp-action="Menu">Preview Menu</a>
+        <a class="secondary-button" asp-controller="Game" asp-action="Final">Preview Final</a>
+    </div>
+
+    <div class="admin-grid">
+        <a class="admin-card-link" href="/admin/settings">
+            <h2>Settings</h2>
+            <p>Game title, names, intro text, colors, music, and final message.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/media">
+            <h2>Media</h2>
+            <p>Drag-and-drop uploads, image/audio validation, gallery, replacement, and deletion.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/messages">
+            <h2>Messages</h2>
+            <p>Reusable text for intros, result screens, unlocks, and final notes.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/games">
+            <h2>Games</h2>
+            <p>Enable, reorder, rename, and customize each mini-game.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/quiz">
+            <h2>Quiz</h2>
+            <p>Edit questions, answers, correct choices, points, and difficulty.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/perfect-date">
+            <h2>Perfect Date</h2>
+            <p>Edit date categories, choices, scores, and ordering.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/cake">
+            <h2>Cake</h2>
+            <p>Edit cake bases, frostings, toppings, decorations, and scores.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/results">
+            <h2>Results</h2>
+            <p>Editable score ranges, funny messages, and final reward content.</p>
+        </a>
+        <a class="admin-card-link" href="/admin/users">
+            <h2>Admin Users</h2>
+            <p>Create admin accounts and manage SuperAdmin access.</p>
+        </a>
+    </div>
+</section>

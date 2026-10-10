@@ -1,0 +1,49 @@
+@model IReadOnlyList<CasualDate.Models.MiniGame>
+
+@{
+    ViewData["Title"] = "Games";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Game Management</h1>
+    <p class="soft-copy">Control which mini-games appear in the player menu and how they are presented.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Home" asp-action="Menu">Preview Menu</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var game in Model)
+                {
+                    <tr>
+                        <td>@game.DisplayOrder</td>
+                        <td>@game.Name</td>
+                        <td>@game.Slug</td>
+                        <td>@(game.IsEnabled ? "Enabled" : "Disabled")</td>
+                        <td class="table-actions">
+                            <a asp-controller="Games" asp-action="Edit" asp-route-id="@game.Id">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

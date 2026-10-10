@@ -1,0 +1,90 @@
+@model CasualDate.ViewModels.Admin.QuizQuestionEditViewModel
+
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create Quiz Question" : "Edit Quiz Question";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>@ViewData["Title"]</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="QuestionText"></label>
+        <textarea asp-for="QuestionText" rows="3"></textarea>
+        <span asp-validation-for="QuestionText"></span>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="QuestionType"></label>
+                <select asp-for="QuestionType" asp-items="Html.GetEnumSelectList<CasualDate.Models.QuizQuestionType>()"></select>
+                <span asp-validation-for="QuestionType"></span>
+            </div>
+            <div>
+                <label asp-for="Difficulty"></label>
+                <input asp-for="Difficulty" placeholder="Easy, Medium, Hard" />
+                <span asp-validation-for="Difficulty"></span>
+            </div>
+            <div>
+                <label asp-for="Points"></label>
+                <input asp-for="Points" type="number" min="1" />
+                <span asp-validation-for="Points"></span>
+            </div>
+            <div>
+                <label asp-for="DisplayOrder"></label>
+                <input asp-for="DisplayOrder" type="number" />
+                <span asp-validation-for="DisplayOrder"></span>
+            </div>
+            <div>
+                <label asp-for="MediaId">Optional question image</label>
+                <select asp-for="MediaId" asp-items="ViewBag.ImageMediaItems"></select>
+                <span asp-validation-for="MediaId"></span>
+            </div>
+        </div>
+
+        <label class="checkbox-row">
+            <input asp-for="IsEnabled" />
+            <span>Enabled</span>
+        </label>
+
+        <div class="answer-editor">
+            <h2>Answers</h2>
+            <p class="soft-copy">Fill at least two answers and choose one correct answer.</p>
+
+            @for (var index = 0; index < Model.Answers.Count; index++)
+            {
+                <div class="answer-row">
+                    <input asp-for="Answers[index].Id" type="hidden" />
+                    <input asp-for="Answers[index].DisplayOrder" type="hidden" />
+                    <label>
+                        <input asp-for="CorrectAnswerIndex" type="radio" value="@index" />
+                        Correct
+                    </label>
+                    <label>
+                        <span>Answer</span>
+                        <input asp-for="Answers[index].AnswerText" placeholder="Answer @(index + 1)" />
+                        <span asp-validation-for="Answers[index].AnswerText"></span>
+                    </label>
+                    <label>
+                        <span>Image</span>
+                        <select asp-for="Answers[index].MediaId" asp-items="ViewBag.ImageMediaItems"></select>
+                    </label>
+                </div>
+            }
+        </div>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Question</button>
+            <a class="secondary-button" asp-controller="Quiz" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

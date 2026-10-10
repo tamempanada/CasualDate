@@ -1,0 +1,179 @@
+@model CasualDate.ViewModels.Player.CakeGameViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Bake a Cake";
+    var resultRangesJson = JsonSerializer.Serialize(Model.ResultRanges);
+}
+
+<section class="cake-page" data-result-ranges='@resultRangesJson'>
+    <div class="cake-header">
+        <p class="eyebrow">Mini-game 2</p>
+        <h1>Bake a Cake</h1>
+        <p class="soft-copy">Choose each layer, decorate it, and see what kind of cake-date energy you created.</p>
+    </div>
+
+    <div class="cake-layout">
+        <div class="cake-builder">
+            <div class="cake-preview cake-builder-preview" aria-label="Cake preview">
+                <div id="cakeDecoration" class="cake-decoration"></div>
+                <div id="cakeTopping" class="cake-topping"></div>
+                <div id="cakeFrosting" class="cake-frosting"></div>
+                <div id="cakeBase" class="cake-base"></div>
+                <div class="cake-plate"></div>
+            </div>
+
+            <div class="cake-stepper" aria-label="Cake steps">
+                <span class="active" data-step-dot="0">Base</span>
+                <span data-step-dot="1">Frosting</span>
+                <span data-step-dot="2">Topping</span>
+                <span data-step-dot="3">Decor</span>
+            </div>
+
+            <div class="cake-actions">
+                <button id="previousCakeStep" class="secondary-button" type="button">Back</button>
+                <button id="nextCakeStep" class="primary-button" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="cake-options-panel">
+            <div class="cake-step active" data-cake-step="0" data-choice-type="base">
+                <h2>Choose a cake base</h2>
+                <div class="cake-options">
+                    @foreach (var item in Model.Bases)
+                    {
+                        var itemImagePath = string.IsNullOrWhiteSpace(item.ImagePath)
+                            ? ""
+                            : Url.Content(item.ImagePath);
+
+                        <button class="cake-option"
+                                type="button"
+                                data-choice-id="@item.Id"
+                                data-choice-name="@item.Name"
+                                data-choice-score="@item.Score"
+                                data-choice-color="@item.Color"
+                                data-choice-image="@itemImagePath">
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@Url.Content(item.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                            }
+                            <strong>@item.Name</strong>
+                            <span>@item.Description</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="cake-step" data-cake-step="1" data-choice-type="frosting">
+                <h2>Choose frosting</h2>
+                <div class="cake-options">
+                    @foreach (var item in Model.Frostings)
+                    {
+                        var itemImagePath = string.IsNullOrWhiteSpace(item.ImagePath)
+                            ? ""
+                            : Url.Content(item.ImagePath);
+
+                        <button class="cake-option"
+                                type="button"
+                                data-choice-id="@item.Id"
+                                data-choice-name="@item.Name"
+                                data-choice-score="@item.Score"
+                                data-choice-color="@item.Color"
+                                data-choice-image="@itemImagePath">
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@Url.Content(item.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                            }
+                            <strong>@item.Name</strong>
+                            <span>@item.Description</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="cake-step" data-cake-step="2" data-choice-type="topping">
+                <h2>Choose a topping</h2>
+                <div class="cake-options">
+                    @foreach (var item in Model.Toppings)
+                    {
+                        var itemImagePath = string.IsNullOrWhiteSpace(item.ImagePath)
+                            ? ""
+                            : Url.Content(item.ImagePath);
+
+                        <button class="cake-option"
+                                type="button"
+                                data-choice-id="@item.Id"
+                                data-choice-name="@item.Name"
+                                data-choice-score="@item.Score"
+                                data-choice-color="@item.Color"
+                                data-choice-image="@itemImagePath">
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@Url.Content(item.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                            }
+                            <strong>@item.Name</strong>
+                            <span>@item.Description</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="cake-step" data-cake-step="3" data-choice-type="decoration">
+                <h2>Choose a decoration</h2>
+                <div class="cake-options">
+                    @foreach (var item in Model.Decorations)
+                    {
+                        var itemImagePath = string.IsNullOrWhiteSpace(item.ImagePath)
+                            ? ""
+                            : Url.Content(item.ImagePath);
+
+                        <button class="cake-option"
+                                type="button"
+                                data-choice-id="@item.Id"
+                                data-choice-name="@item.Name"
+                                data-choice-score="@item.Score"
+                                data-choice-color="@item.Color"
+                                data-choice-image="@itemImagePath">
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@Url.Content(item.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
+                            }
+                            <strong>@item.Name</strong>
+                            <span>@item.Description</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div id="cakeResult" class="result-modal" hidden>
+                <div class="result-modal-card cake-result">
+                    <p class="eyebrow">Your cake</p>
+                    <h2 id="cakeResultTitle">Love Rating</h2>
+                    <img id="cakeResultImage" class="result-image" alt="" hidden />
+                    <div class="cake-result-showcase">
+                        <strong id="cakeResultGrade" class="result-grade">
+                            <span id="cakeAnimatedScore">0</span>/100
+                        </strong>
+                        <div class="cake-preview cake-result-preview" aria-label="Completed cake preview">
+                            <div id="cakeResultDecoration" class="cake-decoration"></div>
+                            <div id="cakeResultTopping" class="cake-topping"></div>
+                            <div id="cakeResultFrosting" class="cake-frosting"></div>
+                            <div id="cakeResultBase" class="cake-base"></div>
+                            <div class="cake-plate"></div>
+                        </div>
+                    </div>
+                    <p id="cakeResultMessage"></p>
+                    <ul id="cakeSummary"></ul>
+                    <button id="completeCakeButton" class="primary-button" type="button" data-complete-game="cake">
+                        Complete Bake a Cake
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/cake.js" asp-append-version="true"></script>
+    <script src="~/js/player-progress.js" asp-append-version="true"></script>
+}

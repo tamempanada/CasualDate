@@ -1,0 +1,54 @@
+@model IReadOnlyList<CasualDate.Models.ResultRange>
+
+@{
+    ViewData["Title"] = "Results";
+    var miniGameNames = ViewBag.MiniGameNames as Dictionary<int, string> ?? new Dictionary<int, string>();
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Results</h1>
+    <p class="soft-copy">Edit score ranges and result messages for score-based mini-games.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Results" asp-action="Create">Add Result Range</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Game</th>
+                    <th>Score</th>
+                    <th>Title</th>
+                    <th>Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var range in Model)
+                {
+                    <tr>
+                        <td>@(miniGameNames.TryGetValue(range.MiniGameId, out var name) ? name : $"Game {range.MiniGameId}")</td>
+                        <td>@range.MinScore - @range.MaxScore</td>
+                        <td>@range.Title</td>
+                        <td>@range.DisplayOrder</td>
+                        <td class="table-actions">
+                            <a asp-controller="Results" asp-action="Edit" asp-route-id="@range.Id">Edit</a>
+                            <form asp-controller="Results" asp-action="Delete" asp-route-id="@range.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

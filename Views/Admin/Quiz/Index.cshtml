@@ -1,0 +1,56 @@
+@model IReadOnlyList<CasualDate.Models.QuizQuestion>
+
+@{
+    ViewData["Title"] = "Quiz Questions";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Quiz Questions</h1>
+    <p class="soft-copy">Edit the questions used by the player quiz.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Quiz" asp-action="Create">Add Question</a>
+        <a class="secondary-button" asp-controller="Game" asp-action="Quiz">Preview Quiz</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Difficulty</th>
+                    <th>Points</th>
+                    <th>Enabled</th>
+                    <th>Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var question in Model)
+                {
+                    <tr>
+                        <td>@question.QuestionText</td>
+                        <td>@question.Difficulty</td>
+                        <td>@question.Points</td>
+                        <td>@(question.IsEnabled ? "Yes" : "No")</td>
+                        <td>@question.DisplayOrder</td>
+                        <td class="table-actions">
+                            <a asp-controller="Quiz" asp-action="Edit" asp-route-id="@question.Id">Edit</a>
+                            <form asp-controller="Quiz" asp-action="Delete" asp-route-id="@question.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

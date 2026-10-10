@@ -1,0 +1,127 @@
+@model CasualDate.ViewModels.Admin.GameSettingEditViewModel
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>General Settings</h1>
+    <p class="soft-copy">Edit the text and colors that shape the player experience. Use <code>{name}</code> inside the intro message to insert your girlfriend's name.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="secondary-button" asp-controller="Home" asp-action="Index">Preview Intro</a>
+        <a class="secondary-button" asp-controller="Home" asp-action="Menu">Preview Menu</a>
+        <a class="secondary-button" asp-controller="Game" asp-action="Final">Preview Final</a>
+        <a class="secondary-button" href="/admin/media">Open Media</a>
+    </div>
+
+    <form class="admin-form wide-form" asp-controller="Settings" asp-action="Index" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="GameTitle"></label>
+        <input asp-for="GameTitle" />
+        <span asp-validation-for="GameTitle"></span>
+
+        <label asp-for="GirlfriendName"></label>
+        <input asp-for="GirlfriendName" />
+        <span asp-validation-for="GirlfriendName"></span>
+
+        <label asp-for="PlayerName"></label>
+        <input asp-for="PlayerName" />
+        <span asp-validation-for="PlayerName"></span>
+
+        <label asp-for="IntroMessage"></label>
+        <textarea asp-for="IntroMessage" rows="3"></textarea>
+        <span asp-validation-for="IntroMessage"></span>
+
+        <label asp-for="IntroSubtitle"></label>
+        <textarea asp-for="IntroSubtitle" rows="3"></textarea>
+        <span asp-validation-for="IntroSubtitle"></span>
+
+        <label asp-for="MainMenuMessage"></label>
+        <textarea asp-for="MainMenuMessage" rows="3"></textarea>
+        <span asp-validation-for="MainMenuMessage"></span>
+
+        <label asp-for="PhotoboothCompletionHeading">Photobooth completion heading</label>
+        <input asp-for="PhotoboothCompletionHeading" />
+        <span asp-validation-for="PhotoboothCompletionHeading"></span>
+
+        <label asp-for="PhotoboothCompletionSubheading">Photobooth completion subheading</label>
+        <textarea asp-for="PhotoboothCompletionSubheading" rows="3"></textarea>
+        <span asp-validation-for="PhotoboothCompletionSubheading"></span>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="YesButtonText"></label>
+                <input asp-for="YesButtonText" />
+                <span asp-validation-for="YesButtonText"></span>
+            </div>
+            <div>
+                <label asp-for="NoButtonText"></label>
+                <input asp-for="NoButtonText" />
+                <span asp-validation-for="NoButtonText"></span>
+            </div>
+        </div>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="NoButtonDisableAfterClicks"></label>
+                <input asp-for="NoButtonDisableAfterClicks" type="number" min="1" max="20" />
+                <small class="field-hint">After this many No clicks, the No button becomes another Yes button.</small>
+                <span asp-validation-for="NoButtonDisableAfterClicks"></span>
+            </div>
+            <div>
+                <label asp-for="YesButtonGrowthRate"></label>
+                <input asp-for="YesButtonGrowthRate" type="number" min="0.05" max="1" step="0.01" />
+                <span asp-validation-for="YesButtonGrowthRate"></span>
+            </div>
+        </div>
+
+        <label asp-for="FinalTitle"></label>
+        <input asp-for="FinalTitle" />
+        <span asp-validation-for="FinalTitle"></span>
+
+        <label asp-for="FinalMessage"></label>
+        <textarea asp-for="FinalMessage" rows="6"></textarea>
+        <span asp-validation-for="FinalMessage"></span>
+
+        <label asp-for="BackgroundMediaId">Background image</label>
+        <select asp-for="BackgroundMediaId" asp-items="ViewBag.BackgroundMedia"></select>
+        <span asp-validation-for="BackgroundMediaId"></span>
+
+        <label asp-for="MusicMediaId">Background music</label>
+        <select asp-for="MusicMediaId" asp-items="ViewBag.MusicMedia"></select>
+        <span asp-validation-for="MusicMediaId"></span>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="PrimaryColor"></label>
+                <input asp-for="PrimaryColor" type="color" />
+                <span asp-validation-for="PrimaryColor"></span>
+            </div>
+            <div>
+                <label asp-for="SecondaryColor"></label>
+                <input asp-for="SecondaryColor" type="color" />
+                <span asp-validation-for="SecondaryColor"></span>
+            </div>
+        </div>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Settings</button>
+            <a class="secondary-button" href="/admin">Back to Dashboard</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

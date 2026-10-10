@@ -1,0 +1,61 @@
+@model CasualDate.ViewModels.Admin.ResultRangeEditViewModel
+
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create Result Range" : "Edit Result Range";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>@ViewData["Title"]</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="MiniGameId">Game</label>
+        <select asp-for="MiniGameId" asp-items="ViewBag.MiniGames"></select>
+        <span asp-validation-for="MiniGameId"></span>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="MinScore"></label>
+                <input asp-for="MinScore" type="number" />
+                <span asp-validation-for="MinScore"></span>
+            </div>
+            <div>
+                <label asp-for="MaxScore"></label>
+                <input asp-for="MaxScore" type="number" />
+                <span asp-validation-for="MaxScore"></span>
+            </div>
+            <div>
+                <label asp-for="DisplayOrder"></label>
+                <input asp-for="DisplayOrder" type="number" />
+                <span asp-validation-for="DisplayOrder"></span>
+            </div>
+        </div>
+
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+
+        <label asp-for="Message"></label>
+        <textarea asp-for="Message" rows="6"></textarea>
+        <span asp-validation-for="Message"></span>
+
+        <label asp-for="MediaId">Result image</label>
+        <select asp-for="MediaId" asp-items="ViewBag.ResultImages"></select>
+        <span asp-validation-for="MediaId"></span>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Result</button>
+            <a class="secondary-button" asp-controller="Results" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

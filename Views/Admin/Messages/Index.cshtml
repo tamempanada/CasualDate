@@ -1,0 +1,51 @@
+@model IReadOnlyList<CasualDate.Models.Message>
+
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Messages</h1>
+    <p class="soft-copy">Create reusable text for intros, result screens, unlocks, and final notes.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Messages" asp-action="Create">Add Message</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Title</th>
+                    <th>Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var message in Model)
+                {
+                    <tr>
+                        <td>@message.Key</td>
+                        <td>@message.Title</td>
+                        <td>@message.DisplayOrder</td>
+                        <td class="table-actions">
+                            <a asp-controller="Messages" asp-action="Edit" asp-route-id="@message.Id">Edit</a>
+                            <form asp-controller="Messages" asp-action="Delete" asp-route-id="@message.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
