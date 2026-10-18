@@ -1,0 +1,84 @@
+@model CasualDate.ViewModels.Admin.TokenRewardsEditViewModel
+
+@{
+    ViewData["Title"] = "Token Rewards";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Token Rewards</h1>
+    <p class="soft-copy">Set how many wallet tokens future game completions award. Existing earned tokens and past transactions stay unchanged.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="secondary-button" asp-controller="Home" asp-action="Menu">Preview Menu</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <form class="admin-form wide-form" asp-controller="TokenRewards" asp-action="Index" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        @foreach (var group in Model.Rewards
+            .Select((reward, index) => new { Reward = reward, Index = index })
+            .GroupBy(item => item.Reward.GroupName))
+        {
+            <section class="token-reward-group">
+                <div>
+                    <p class="eyebrow">@group.Key</p>
+                    <h2>@group.Key Rewards</h2>
+                </div>
+                <div class="token-reward-grid">
+            @foreach (var item in group)
+            {
+                var index = item.Index;
+                <article class="token-reward-card">
+                    <input asp-for="Rewards[index].Id" type="hidden" />
+                    <input asp-for="Rewards[index].EventKey" type="hidden" />
+                    <input asp-for="Rewards[index].DisplayName" type="hidden" />
+                    <input asp-for="Rewards[index].GroupName" type="hidden" />
+
+                    <div>
+                        <p class="eyebrow">@Model.Rewards[index].EventKey</p>
+                        <h2>@Model.Rewards[index].DisplayName</h2>
+                    </div>
+
+                    <div class="two-column-fields">
+                        <div>
+                            <label asp-for="Rewards[index].TokenAmount">Token reward</label>
+                            <input asp-for="Rewards[index].TokenAmount" type="number" min="0" max="10000" />
+                            <span asp-validation-for="Rewards[index].TokenAmount"></span>
+                        </div>
+                        <label class="toggle-field">
+                            <input asp-for="Rewards[index].IsEnabled" />
+                            <span>Enabled</span>
+                        </label>
+                    </div>
+                    @if (Model.Rewards[index].EventKey is "love-blocks:score" or "love-blocks:lines")
+                    {
+                        <div>
+                            <label asp-for="Rewards[index].TriggerInterval">@(Model.Rewards[index].EventKey == "love-blocks:score" ? "Score interval (points)" : "Line interval")</label>
+                            <input asp-for="Rewards[index].TriggerInterval" type="number" min="1" max="100000" />
+                            <span asp-validation-for="Rewards[index].TriggerInterval"></span>
+                        </div>
+                    }
+                </article>
+            }
+                </div>
+            </section>
+        }
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Token Rewards</button>
+            <a class="secondary-button" href="/admin">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

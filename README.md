@@ -1,41 +1,47 @@
 # Casual Date
 
-**A cozy, interactive mini-game website built as a personal project.**
+Casual Date is a personalized browser-based mini-game collection built with ASP.NET Core MVC, Razor, JavaScript, EF Core, ASP.NET Core Identity, and MySQL. It includes Photobooth, Bake a Cake, Perfect Date, a personal quiz, Hangman, Blackjack, Girlfriend Gacha, and Love Blocks, plus protected administration, player profiles, persistent token wallets, and uploaded media.
 
-Casual Date is a browser-based mini-game collection designed to make simple moments feel more personal through playful activities, customizable content, and a warm, romantic interface.
+## Requirements
 
-## Features
+- .NET 10 SDK
+- MySQL 8.0 compatible server
+- A persistent writable directory for uploaded media
+- HTTPS and a persistent ASP.NET Core Data Protection key directory in production
 
-- **Bake a Cake** — A playful cake-making mini-game.
-- **Perfect Date** — An interactive date-themed experience.
-- **How Well Do You Know Me?** — A personalized question-and-answer game.
-- **Customizable Content** — Administrative tools for managing supported game content and images.
-- **Personalized Music** — Background music selection and custom album artwork.
+## Run Locally
 
-## Tech Stack
+1. Clone the repository and enter the `CasualDate` directory.
+2. Create a MySQL database and a dedicated database user with access only to that database.
+3. Set the following environment variables for the process that runs the app:
 
-- C#
-- ASP.NET Core
-- HTML, CSS, and JavaScript
-- Bootstrap
-- MySQL
-- ASP.NET Core Identity
+```powershell
+$env:ConnectionStrings__DefaultConnection = "server=localhost;port=3306;database=casual_date;user=casualdate_user;password=YOUR_LOCAL_PASSWORD;"
+$env:SeedAdmin__Email = "you@example.com"
+$env:SeedAdmin__Password = "Use-a-unique-strong-password"
+```
 
-## Project Goals
+4. Restore and run:
 
-This project is an opportunity to practice full-stack web development, authentication, database integration, interface design, and interactive browser experiences while creating something meaningful.
+```powershell
+dotnet restore --configfile .\NuGet.Config
+dotnet run
+```
 
-## Running Locally
+The configured seed administrator is assigned both `Admin` and `SuperAdmin`. The seed values are applied at startup; keep them private and do not use development credentials in production. Local `appsettings.json` files are ignored by Git.
 
-1. Install the .NET SDK required by the project.
-2. Install and configure MySQL.
-3. Clone this repository.
-4. Configure your local database connection and any required application settings using your own credentials.
-5. Apply any required database migrations or setup scripts.
-6. Run the application using the .NET CLI.
+The app applies EF Core migrations at startup and also contains compatibility repairs for older databases. Review [the deployment checklist](docs/DEPLOYMENT_CHECKLIST.md) and back up an existing database before the first upgraded deployment.
 
-**Important:** Do not commit real credentials, private databases, or personal gift media. Refer to the project's setup documentation for the exact configuration required.
+## Project Documentation
 
-## Project Status
+- [Project history and feature progression](docs/PROJECT_HISTORY.md)
+- [Production deployment checklist](docs/DEPLOYMENT_CHECKLIST.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Database schema notes](docs/DATABASE_SCHEMA.md)
+- [Original implementation milestone notes](docs/)
 
-Developed as a personal learning and portfolio project. Features and setup instructions may evolve during development.
+## Security and Data
+
+- Never commit credentials, database exports, private gift media, or real player data.
+- Treat MySQL as persistent state and `wwwroot/uploads/` as user data that must be backed up and stored on a persistent volume.
+- Deploy only after checking the database migration state and confirming the application can connect with its production configuration.

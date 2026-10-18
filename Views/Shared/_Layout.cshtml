@@ -1,6 +1,7 @@
 @inject CasualDate.Data.ApplicationDbContext LayoutDb
 @using CasualDate.Models
 @using System.Text.Json
+@using System.Security.Claims
 
 @{
     var isAdminPage = Context.Request.Path.StartsWithSegments("/admin");
@@ -12,6 +13,38 @@
     var musicTracks = new List<UploadedMedia>();
     var musicTrackData = new List<object>();
     var selectedMusicCover = "";
+    var companionImage = "";
+    var companionName = "";
+    var playerId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var playerPreferences = !string.IsNullOrWhiteSpace(playerId)
+        ? LayoutDb.PlayerProfiles
+            .Where(profile => profile.ApplicationUserId == playerId)
+            .Select(profile => new
+            {
+                profile.Id,
+                profile.EquippedThemeId,
+                profile.EquippedMusicSkinId,
+                profile.EquippedEffectId,
+                profile.EquippedCompanionRewardId,
+                profile.SelectedMusicMediaId
+            })
+            .FirstOrDefault()
+        : null;
+    var equippedCompanion = showMusic && playerPreferences?.EquippedCompanionRewardId is int companionRewardId
+        ? LayoutDb.GachaCollectionItems
+            .Where(item => item.PlayerProfileId == playerPreferences.Id
+                && item.GachaRewardId == companionRewardId
+                && item.SnapshotRewardType == GachaRewardType.Doll.ToString())
+            .Select(item => new { item.SnapshotName, item.SnapshotImagePath })
+            .FirstOrDefault()
+        : null;
+    companionName = equippedCompanion?.SnapshotName ?? "";
+    companionImage = string.IsNullOrWhiteSpace(equippedCompanion?.SnapshotImagePath)
+        ? ""
+        : Url.Content(equippedCompanion.SnapshotImagePath);
+    var themeStyle = BuiltInCosmeticCatalog.Find(playerPreferences?.EquippedThemeId)?.StyleKey ?? "default";
+    var musicSkinStyle = BuiltInCosmeticCatalog.Find(playerPreferences?.EquippedMusicSkinId)?.StyleKey ?? "default";
+    var effectStyle = BuiltInCosmeticCatalog.Find(playerPreferences?.EquippedEffectId)?.StyleKey ?? "none";
 
     if (showMusic || showBackground)
     {
@@ -32,7 +65,9 @@
                 .ThenBy(media => media.Id)
                 .ToList();
 
-            music = settings?.MusicMediaId is not null
+            music = playerPreferences?.SelectedMusicMediaId is not null
+                ? musicTracks.FirstOrDefault(media => media.Id == playerPreferences.SelectedMusicMediaId)
+                : settings?.MusicMediaId is not null
                 ? musicTracks.FirstOrDefault(media => media.Id == settings.MusicMediaId)
                 : null;
 
@@ -89,7 +124,9 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="site-shell @(background is not null ? "has-page-background" : "")"
+<body class="site-shell @(!isAdminPage ? "player-theme-scope" : "") @(background is not null ? "has-page-background" : "")"
+      data-theme="@themeStyle"
+      data-effect="@effectStyle"
       style="@(background is not null ? $"--page-background-image: url('{background.FilePath}');" : "")">
     <header class="top-bar">
         <a class="brand-link" asp-controller="Home" asp-action="Index">Casual Date</a>
@@ -110,12 +147,15 @@
 
     @if (music is not null)
     {
-        <div class="music-widget" data-music-widget data-music-id="@music.Id">
+        <div class="music-widget music-skin-@musicSkinStyle" data-music-widget data-music-id="@music.Id" data-preferred-track="@(playerPreferences?.SelectedMusicMediaId ?? 0)" data-companion-src="@companionImage" data-companion-name="@companionName">
             <audio data-music-audio src="@Url.Content(music.FilePath)"></audio>
             <button class="music-expand-button" type="button" data-music-expand aria-label="Expand music player" hidden>♪ +</button>
-            <div class="music-cover-frame">
-                <img class="music-cover @(string.IsNullOrWhiteSpace(selectedMusicCover) ? "is-hidden" : "")" data-music-cover src="@selectedMusicCover" alt="" />
-                <div class="music-cover-placeholder @(string.IsNullOrWhiteSpace(selectedMusicCover) ? "" : "is-hidden")" data-music-cover-placeholder>Music</div>
+            <div class="music-artwork @(string.IsNullOrWhiteSpace(companionImage) ? "" : "has-companion")">
+                <div class="music-cover-frame">
+                    <img class="music-cover @(string.IsNullOrWhiteSpace(selectedMusicCover) ? "is-hidden" : "")" data-music-cover src="@selectedMusicCover" alt="" />
+                    <div class="music-cover-placeholder @(string.IsNullOrWhiteSpace(selectedMusicCover) ? "" : "is-hidden")" data-music-cover-placeholder>Music</div>
+                </div>
+                <img class="music-companion @(string.IsNullOrWhiteSpace(companionImage) ? "is-hidden" : "")" data-music-companion src="@companionImage" alt="@companionName, your companion doll" />
             </div>
             <div class="music-info">
                 <span data-music-title>@music.DisplayName</span>

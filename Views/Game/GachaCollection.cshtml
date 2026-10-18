@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Gacha Collection";
+}
+
+<section class="feature-page gacha-page">
+    <p class="eyebrow">Girlfriend Gacha</p>
+    <h1>Collection</h1>
+    <p class="soft-copy">Every reward you chose to keep stays here, including duplicates.</p>
+
+    <div class="gacha-collection-page" data-gacha-collection-root>
+        <div class="section-heading-row">
+            <div>
+                <p class="eyebrow">Permanent collection</p>
+                <h2>Kept Rewards</h2>
+            </div>
+            <div class="admin-actions">
+                <button class="secondary-button" type="button" data-gacha-refresh>Refresh</button>
+                <a class="secondary-button" asp-controller="Game" asp-action="Gacha">Back to Gacha</a>
+            </div>
+        </div>
+
+        <div class="gacha-filters" aria-label="Collection filters">
+            <button type="button" data-gacha-filter-group="type" data-gacha-filter="all" class="is-active">All Types</button>
+            <button type="button" data-gacha-filter-group="type" data-gacha-filter="Doll">Doll</button>
+            <button type="button" data-gacha-filter-group="type" data-gacha-filter="Letter">Letter</button>
+            <button type="button" data-gacha-filter-group="type" data-gacha-filter="Poster">Poster</button>
+        </div>
+
+        <div class="gacha-filters" aria-label="Rarity filters">
+            <button type="button" data-gacha-filter-group="rarity" data-gacha-filter="all" class="is-active">All Rarities</button>
+            <button type="button" data-gacha-filter-group="rarity" data-gacha-filter="Common">Common</button>
+            <button type="button" data-gacha-filter-group="rarity" data-gacha-filter="Rare">Rare</button>
+            <button type="button" data-gacha-filter-group="rarity" data-gacha-filter="Epic">Epic</button>
+            <button type="button" data-gacha-filter-group="rarity" data-gacha-filter="Legendary">Legendary</button>
+        </div>
+
+        <p class="gacha-status" data-gacha-status>Loading collection...</p>
+        <div class="gacha-collection gacha-collection-wide" data-gacha-collection>
+            <p class="soft-copy">Loading collection...</p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/gacha-collection.js" asp-append-version="true"></script>
+}

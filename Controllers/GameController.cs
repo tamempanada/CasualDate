@@ -172,11 +172,48 @@ public class GameController : Controller
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> Gacha()
+    {
+        var settings = await GetSettingsAsync();
+        var bannerPaths = await GetImagePathsAsync(new[] { settings.GachaBannerMediaId });
+
+        return View(new GachaGameViewModel
+        {
+            BannerImagePath = GetImagePath(bannerPaths, settings.GachaBannerMediaId)
+        });
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult GachaCollection()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult LoveBlocks()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Hangman()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Blackjack()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public async Task<IActionResult> Final()
     {
         var settings = await GetSettingsAsync();
+        var completionSlugs = new[] { "photobooth", "cake", "perfect-date", "quiz" };
         var requiredGameSlugs = await _context.MiniGames
-            .Where(game => game.IsEnabled)
+            .Where(game => game.IsEnabled && completionSlugs.Contains(game.Slug))
             .OrderBy(game => game.DisplayOrder)
             .Select(game => game.Slug)
             .ToListAsync();

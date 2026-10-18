@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Customize";
+}
+
+<section class="feature-page customize-page" data-customize-root>
+    <p class="eyebrow">Your collection</p>
+    <h1>Customize</h1>
+    <p class="soft-copy">Use the Legendary treasures you have kept from Girlfriend Gacha.</p>
+
+    <div class="customize-tabs" role="tablist" aria-label="Customize categories">
+        <button class="is-active" type="button" role="tab" data-customize-tab="Theme">Themes</button>
+        <button type="button" role="tab" data-customize-tab="MusicSkin">Music</button>
+        <button type="button" role="tab" data-customize-tab="Effect">Effects</button>
+        <button type="button" role="tab" data-customize-tab="Companion">Companions</button>
+    </div>
+
+    <p class="customize-status" data-customize-status aria-live="polite">Loading your collection...</p>
+    <div class="customize-grid" data-customize-grid></div>
+    <div class="customize-actions">
+        <a class="secondary-button" asp-controller="Game" asp-action="Gacha">Go to Gacha</a>
+        <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/customize.js" asp-append-version="true"></script>
+}

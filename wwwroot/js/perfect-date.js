@@ -117,20 +117,38 @@ function getDateResult(score) {
   };
 }
 
-function revealDateResult() {
+async function revealDateResult() {
   if (Object.keys(dateChoices).length < dateSteps.length) {
     datePlanTitle.textContent = "Pick one from each step";
     return;
   }
 
-  const score = getDateScore();
-  const result = getDateResult(score);
+  nextDateStepButton.disabled = true;
+  let completion;
+  try {
+    completion = await window.CasualDateGameRewards.complete("perfect-date", {
+      optionIds: Object.values(dateChoices).map((choice) => Number(choice.id))
+    });
+  } catch (error) {
+    datePlanTitle.textContent = error.message;
+    nextDateStepButton.disabled = false;
+    return;
+  }
+
+  if (!completion?.result) {
+    datePlanTitle.textContent = "This attempt is already complete.";
+    nextDateStepButton.disabled = false;
+    return;
+  }
+
+  const score = completion.score;
+  const result = completion.result;
 
   dateScore.textContent = String(score);
   dateResultTitle.textContent = result.Title || result.title;
   dateResultMessage.textContent = result.Message || result.message;
   animateNumber(dateAnimatedScore, score);
-  showResultImage(dateResultImage, result.ImagePath || result.imagePath);
+  showResultImage(dateResultImage, result.imagePath);
   dateResult.hidden = false;
 }
 
@@ -187,7 +205,7 @@ previousDateStepButton?.addEventListener("click", () => {
 
 nextDateStepButton?.addEventListener("click", () => {
   if (currentDateStep === dateSteps.length - 1) {
-    revealDateResult();
+    void revealDateResult();
     return;
   }
 

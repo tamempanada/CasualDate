@@ -1,6 +1,10 @@
 # Build output
 bin/
 obj/
+/build-*/
+/build-temp/
+/ef-bin/
+/ef-obj/
 
 # Visual Studio
 .vs/
@@ -27,6 +31,11 @@ appsettings.json
 Thumbs.db
 
 # Private, user-uploaded gift media
+wwwroot/uploads/**
+!wwwroot/uploads/audio/
+!wwwroot/uploads/audio/.gitkeep
+!wwwroot/uploads/images/
+!wwwroot/uploads/images/.gitkeep
 wwwroot/uploads/audio/*
 !wwwroot/uploads/audio/.gitkeep
 wwwroot/uploads/images/*

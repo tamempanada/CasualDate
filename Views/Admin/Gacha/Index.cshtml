@@ -1,0 +1,136 @@
+@model CasualDate.ViewModels.Admin.GachaAdminIndexViewModel
+
+@{
+    ViewData["Title"] = "Gacha Rewards";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Gacha Rewards</h1>
+    <p class="soft-copy">Create Doll, Letter, and Poster rewards for the Girlfriend Gacha active pool.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="primary-button" asp-controller="Gacha" asp-action="Create">Add Reward</a>
+        <a class="secondary-button" asp-controller="Game" asp-action="Gacha">Preview Gacha</a>
+        <a class="secondary-button" asp-controller="Media" asp-action="Index">Upload Media</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="admin-card gacha-banner-admin">
+        <div>
+            <p class="eyebrow">Gacha banner</p>
+            <h2>Landscape Banner</h2>
+            <p class="soft-copy">Choose an uploaded image to display on the Girlfriend Gacha screen.</p>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.GachaBannerPath))
+        {
+            <img src="@Model.GachaBannerPath" alt="Current Gacha banner" />
+            <p class="soft-copy">Current: @Model.GachaBannerName</p>
+        }
+        else
+        {
+            <div class="gacha-banner-empty">No banner selected</div>
+        }
+        <form asp-controller="Gacha" asp-action="SaveBanner" method="post" class="admin-form wide-form">
+            @Html.AntiForgeryToken()
+            <label>
+                Banner image
+                <select asp-for="GachaBannerMediaId" asp-items="Model.ImageMediaItems"></select>
+            </label>
+            <button class="primary-button" type="submit">Save Banner</button>
+        </form>
+        <form asp-controller="Gacha" asp-action="DeactivateBanner" method="post">
+            @Html.AntiForgeryToken()
+            <button class="secondary-button" type="submit">Deactivate Banner</button>
+        </form>
+    </div>
+
+    <div class="admin-note">
+        Pull rates are controlled in code for this version: Common 60, Rare 28, Epic 10, Legendary 2.
+    </div>
+
+    <div class="admin-card">
+        <p class="eyebrow">Built-in cosmetics</p>
+        <h2>Legendary Cosmetic Display Images</h2>
+        <p class="soft-copy">These 15 definitions are fixed by the application. You can only set or replace their optional display image.</p>
+        <div class="cosmetic-admin-grid">
+            @foreach (var cosmetic in Model.Rewards.Where(reward => !string.IsNullOrWhiteSpace(reward.BuiltInCosmeticId)))
+            {
+                <form asp-controller="Gacha" asp-action="UpdateCosmeticMedia" asp-route-id="@cosmetic.Id" method="post" class="cosmetic-admin-item">
+                    @Html.AntiForgeryToken()
+                    <strong>@cosmetic.Name</strong>
+                    <small>@cosmetic.BuiltInCosmeticId</small>
+                    @if (cosmetic.Media is not null)
+                    {
+                        <img src="@cosmetic.Media.FilePath" alt="@cosmetic.Name display image" />
+                    }
+                    <select name="mediaId">
+                        <option value="">Use built-in fallback</option>
+                        @foreach (var image in Model.ImageMediaItems.Where(item => !string.IsNullOrWhiteSpace(item.Value)))
+                        {
+                            <option value="@image.Value" selected="@(image.Value == cosmetic.MediaId?.ToString() ? "selected" : null)">@image.Text</option>
+                        }
+                    </select>
+                    <button class="secondary-button" type="submit">Save image</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="table-shell">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Reward</th>
+                    <th>Type</th>
+                    <th>Rarity</th>
+                    <th>Artwork</th>
+                    <th>Active</th>
+                    <th>Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reward in Model.Rewards.Where(reward => string.IsNullOrWhiteSpace(reward.BuiltInCosmeticId)))
+                {
+                    <tr>
+                        <td>
+                            <strong>@reward.Name</strong>
+                            <span>@reward.Description</span>
+                        </td>
+                        <td>@reward.RewardType</td>
+                        <td><span class="rarity-pill rarity-@reward.Rarity.ToString().ToLowerInvariant()">@reward.Rarity</span></td>
+                        <td>
+                            @if (reward.Media is not null)
+                            {
+                                <span>@reward.Media.DisplayName</span>
+                            }
+                            else if (reward.RewardType == CasualDate.Models.GachaRewardType.Letter)
+                            {
+                                <span>Letter text</span>
+                            }
+                            else
+                            {
+                                <span>Missing</span>
+                            }
+                        </td>
+                        <td>@(reward.IsActive ? "Yes" : "No")</td>
+                        <td>@reward.DisplayOrder</td>
+                        <td class="table-actions">
+                            <a asp-controller="Gacha" asp-action="Edit" asp-route-id="@reward.Id">Edit</a>
+                            <form asp-controller="Gacha" asp-action="Delete" asp-route-id="@reward.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

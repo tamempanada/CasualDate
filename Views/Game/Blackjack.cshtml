@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Blackjack";
+}
+
+<section class="feature-page blackjack-page">
+    <p class="eyebrow">Mini-game 8</p>
+    <h1>Blackjack</h1>
+    <p class="soft-copy">Play a quick hand using your shared token wallet. The dealer stands on 17.</p>
+
+    <div class="blackjack-shell" data-blackjack-root>
+        <aside class="blackjack-panel">
+            <div>
+                <p class="eyebrow">Wallet</p>
+                <h2><span data-balance>0</span> tokens</h2>
+            </div>
+
+            <label class="blackjack-bet-control">
+                <span>Bet amount</span>
+                <input type="number" min="1" max="250" value="10" data-bet-input />
+            </label>
+
+            <div class="blackjack-actions">
+                <button class="primary-button" type="button" data-deal>Deal</button>
+                <button class="secondary-button" type="button" data-hit disabled>Hit</button>
+                <button class="secondary-button" type="button" data-stand disabled>Stand</button>
+            </div>
+
+            <p class="blackjack-rules">Normal win returns 2x your bet. Push returns your bet. Natural Blackjack returns 3x.</p>
+            <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+        </aside>
+
+        <div class="blackjack-table">
+            <div class="blackjack-hand">
+                <div class="blackjack-hand-heading">
+                    <p class="eyebrow">Dealer</p>
+                    <strong data-dealer-value>Hidden</strong>
+                </div>
+                <div class="blackjack-cards" data-dealer-cards></div>
+            </div>
+
+            <div class="blackjack-status-card">
+                <p class="eyebrow" data-round-status>Ready</p>
+                <h2 data-round-message>Place a token bet to deal.</h2>
+                <div class="blackjack-pot" aria-label="Current token wager">
+                    <div class="blackjack-chip-stack" data-chip-stack aria-hidden="true"></div>
+                    <p>Wager <strong data-current-bet>0</strong> tokens</p>
+                </div>
+            </div>
+
+            <div class="blackjack-hand">
+                <div class="blackjack-hand-heading">
+                    <p class="eyebrow">You</p>
+                    <strong><span data-player-value>0</span></strong>
+                </div>
+                <div class="blackjack-cards" data-player-cards></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/blackjack.js" asp-append-version="true"></script>
+}

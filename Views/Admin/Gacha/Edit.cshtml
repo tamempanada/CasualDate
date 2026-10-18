@@ -1,0 +1,79 @@
+@model CasualDate.ViewModels.Admin.GachaRewardEditViewModel
+
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create Gacha Reward" : "Edit Gacha Reward";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>@ViewData["Title"]</h1>
+
+    <form class="admin-form wide-form" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="RewardType"></label>
+                <select asp-for="RewardType" asp-items="Html.GetEnumSelectList<CasualDate.Models.GachaRewardType>()"></select>
+                <span asp-validation-for="RewardType"></span>
+            </div>
+            <div>
+                <label asp-for="Rarity"></label>
+                <select asp-for="Rarity" asp-items="Html.GetEnumSelectList<CasualDate.Models.GachaRarity>()"></select>
+                <span asp-validation-for="Rarity"></span>
+            </div>
+            <div>
+                <label asp-for="Name"></label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name"></span>
+            </div>
+            <div>
+                <label asp-for="DisplayOrder"></label>
+                <input asp-for="DisplayOrder" type="number" />
+                <span asp-validation-for="DisplayOrder"></span>
+            </div>
+            <div>
+                <label asp-for="MediaId"></label>
+                <select asp-for="MediaId" asp-items="ViewBag.ImageMediaItems"></select>
+                <span asp-validation-for="MediaId"></span>
+            </div>
+            <label class="checkbox-row">
+                <input asp-for="IsActive" />
+                <span>Active in pull pool</span>
+            </label>
+        </div>
+
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" rows="3"></textarea>
+        <span asp-validation-for="Description"></span>
+
+        <div class="two-column-fields">
+            <div>
+                <label asp-for="LetterTitle"></label>
+                <input asp-for="LetterTitle" />
+                <span asp-validation-for="LetterTitle"></span>
+            </div>
+        </div>
+
+        <label asp-for="LetterContent"></label>
+        <textarea asp-for="LetterContent" rows="7"></textarea>
+        <span asp-validation-for="LetterContent"></span>
+
+        <div class="admin-note">
+            Doll and Poster rewards need artwork from Media. Letter rewards use the letter fields and ignore artwork.
+        </div>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Save Reward</button>
+            <a class="secondary-button" asp-controller="Gacha" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

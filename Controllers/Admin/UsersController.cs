@@ -25,6 +25,7 @@ public class UsersController : Controller
     public async Task<IActionResult> Index()
     {
         var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
+        var playerUsers = await _userManager.GetUsersInRoleAsync("Player");
         var model = new List<AdminUserListItemViewModel>();
 
         foreach (var user in adminUsers.OrderBy(user => user.Email))
@@ -33,7 +34,24 @@ public class UsersController : Controller
             {
                 Id = user.Id,
                 Email = user.Email ?? user.UserName ?? "",
+                AccountType = "Admin",
                 IsSuperAdmin = await _userManager.IsInRoleAsync(user, "SuperAdmin")
+            });
+        }
+
+        foreach (var user in playerUsers.OrderBy(user => user.Email))
+        {
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                continue;
+            }
+
+            model.Add(new AdminUserListItemViewModel
+            {
+                Id = user.Id,
+                Email = user.Email ?? user.UserName ?? "",
+                AccountType = "Player",
+                IsSuperAdmin = false
             });
         }
 
@@ -55,6 +73,7 @@ public class UsersController : Controller
             return View("~/Views/Admin/Users/Create.cshtml", model);
         }
 
+        await EnsureRoleAsync("Player");
         await EnsureRoleAsync("Admin");
         await EnsureRoleAsync("SuperAdmin");
 
@@ -81,14 +100,23 @@ public class UsersController : Controller
             return View("~/Views/Admin/Users/Create.cshtml", model);
         }
 
-        await _userManager.AddToRoleAsync(user, "Admin");
-
-        if (model.IsSuperAdmin)
+        if (model.AccountType == "Admin")
         {
-            await _userManager.AddToRoleAsync(user, "SuperAdmin");
+            await _userManager.AddToRoleAsync(user, "Admin");
+
+            if (model.IsSuperAdmin)
+            {
+                await _userManager.AddToRoleAsync(user, "SuperAdmin");
+            }
+        }
+        else
+        {
+            await _userManager.AddToRoleAsync(user, "Player");
         }
 
-        TempData["StatusMessage"] = "Admin account created.";
+        TempData["StatusMessage"] = model.AccountType == "Admin"
+            ? "Admin account created."
+            : "Player account created.";
         return RedirectToAction(nameof(Index));
     }
 

@@ -1,0 +1,40 @@
+@model CasualDate.ViewModels.Player.PlayerLoginViewModel
+
+@{
+    ViewData["Title"] = "Player Login";
+}
+
+<section class="admin-login" aria-labelledby="player-login-title">
+    <p class="eyebrow">Casual Date Player</p>
+    <h1 id="player-login-title">Player Login</h1>
+    <p class="soft-copy">Sign in with the account created by the admin to save tokens, collections, diary pages, and progress.</p>
+
+    <form class="admin-form" asp-controller="Player" asp-action="Login" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="ReturnUrl" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <label asp-for="Email"></label>
+        <input asp-for="Email" autocomplete="username" />
+        <span asp-validation-for="Email"></span>
+
+        <label asp-for="Password"></label>
+        <input asp-for="Password" autocomplete="current-password" />
+        <span asp-validation-for="Password"></span>
+
+        <label class="checkbox-row">
+            <input asp-for="RememberMe" />
+            <span>Remember me</span>
+        </label>
+
+        <div class="admin-actions">
+            <button class="primary-button" type="submit">Log In</button>
+            <a class="secondary-button" asp-controller="Home" asp-action="Index">Back</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

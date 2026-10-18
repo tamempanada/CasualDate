@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CasualDate.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261007174321_AddPhotoboothCompletionText")]
-    partial class AddPhotoboothCompletionText
+    [Migration("20261011161542_PlayerWalletFoundation")]
+    partial class PlayerWalletFoundation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,16 +328,6 @@ namespace CasualDate.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("PhotoboothCompletionHeading")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("varchar(160)");
-
-                    b.Property<string>("PhotoboothCompletionSubheading")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
                     b.Property<int?>("MusicMediaId")
                         .HasColumnType("int");
 
@@ -352,6 +342,16 @@ namespace CasualDate.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("varchar(40)");
+
+                    b.Property<string>("PhotoboothCompletionHeading")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<string>("PhotoboothCompletionSubheading")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("PlayerName")
                         .IsRequired()

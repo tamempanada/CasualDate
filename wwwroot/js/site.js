@@ -37,7 +37,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 function isPlayerNavigationPath(url) {
-  return (url.pathname === "/Home/Menu" || url.pathname.startsWith("/Game/"))
+  return (url.pathname === "/Home/Menu" || url.pathname.startsWith("/Game/") || url.pathname.startsWith("/customize"))
     && !url.pathname.startsWith("/Game/Index");
 }
 
@@ -129,7 +129,32 @@ async function navigateWithinPlayer(url, options = {}) {
 
     document.title = nextDocument.title;
     document.body.className = nextDocument.body.className;
+    document.body.dataset.theme = nextDocument.body.dataset.theme || "default";
+    document.body.dataset.effect = nextDocument.body.dataset.effect || "none";
     document.body.setAttribute("style", nextDocument.body.getAttribute("style") || "");
+    const nextMusicWidget = nextDocument.querySelector("[data-music-widget]");
+    if (musicWidget && nextMusicWidget) {
+      const nextSkinClass = [...nextMusicWidget.classList].find(className => className.startsWith("music-skin-"));
+      [...musicWidget.classList]
+        .filter(className => className.startsWith("music-skin-"))
+        .forEach(className => musicWidget.classList.remove(className));
+      if (nextSkinClass) {
+        musicWidget.classList.add(nextSkinClass);
+      }
+
+      const companionImage = musicWidget.querySelector("[data-music-companion]");
+      const companionArtwork = musicWidget.querySelector(".music-artwork");
+      const companionSrc = nextMusicWidget.dataset.companionSrc || "";
+      const companionName = nextMusicWidget.dataset.companionName || "";
+      musicWidget.dataset.companionSrc = companionSrc;
+      musicWidget.dataset.companionName = companionName;
+      if (companionImage) {
+        companionImage.src = companionSrc;
+        companionImage.alt = companionName ? `${companionName}, your companion doll` : "";
+        companionImage.classList.toggle("is-hidden", !companionSrc);
+      }
+      companionArtwork?.classList.toggle("has-companion", Boolean(companionSrc));
+    }
     currentMain.innerHTML = nextMain.innerHTML;
 
     if (!options.replaceHistory) {
@@ -573,7 +598,8 @@ if (musicAudio && musicTracks.length > 0) {
   musicAudio.muted = false;
   musicAudio.volume = 1;
 
-  const savedTrackId = getSavedMusicTrackId();
+  const preferredTrackId = Number(musicWidget.dataset.preferredTrack || 0);
+  const savedTrackId = preferredTrackId || getSavedMusicTrackId();
 
   if (savedTrackId && savedTrackId !== currentMusicTrackId) {
     loadMusicTrack(savedTrackId, { skipSaveCurrentTime: true });
@@ -591,4 +617,32 @@ updateMusicProgress();
 
 if (musicWidget && musicAudio && window.localStorage.getItem(musicPreferenceKey) === "true") {
   playMusic();
+}
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (!reducedMotion) {
+  const addParticle = (x, y, kind) => {
+    const particle = document.createElement("span");
+    particle.className = `cosmetic-particle cosmetic-particle-${kind}`;
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    document.body.append(particle);
+    window.setTimeout(() => particle.remove(), 720);
+  };
+
+  let lastTrail = 0;
+  document.addEventListener("pointermove", (event) => {
+    const activeEffect = document.body.dataset.effect || "none";
+    if ((activeEffect !== "rose-petals" && activeEffect !== "stardust") || event.pointerType === "touch" || Date.now() - lastTrail < 60) return;
+    lastTrail = Date.now();
+    addParticle(event.clientX, event.clientY, activeEffect);
+  }, { passive: true });
+
+  document.addEventListener("pointerdown", (event) => {
+    const activeEffect = document.body.dataset.effect || "none";
+    if (event.target.closest("input, textarea, select")) return;
+    if (activeEffect === "heartbeats" || activeEffect === "golden-touch") addParticle(event.clientX, event.clientY, activeEffect);
+    if (activeEffect === "dream-sparkles" && event.target.closest("button, a, .game-card")) addParticle(event.clientX, event.clientY, activeEffect);
+  }, { passive: true });
 }

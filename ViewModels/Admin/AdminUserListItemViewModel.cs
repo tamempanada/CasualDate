@@ -6,5 +6,7 @@ public class AdminUserListItemViewModel
 
     public string Email { get; set; } = "";
 
+    public string AccountType { get; set; } = "";
+
     public bool IsSuperAdmin { get; set; }
 }

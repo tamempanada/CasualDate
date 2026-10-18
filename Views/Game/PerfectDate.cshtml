@@ -81,7 +81,7 @@
                     </strong>
                     <img id="dateResultImage" class="result-image" alt="" hidden />
                     <p id="dateResultMessage"></p>
-                    <button id="completeDateButton" class="primary-button" type="button" data-complete-game="perfect-date">
+                    <button id="completeDateButton" class="primary-button" type="button" data-complete-game="perfect-date" data-skip-completion-reward="true">
                         Complete Perfect Date
                     </button>
                 </div>
@@ -92,5 +92,6 @@
 
 @section Scripts {
     <script src="~/js/player-progress.js" asp-append-version="true"></script>
+    <script src="~/js/game-rewards.js" asp-append-version="true"></script>
     <script src="~/js/perfect-date.js" asp-append-version="true"></script>
 }

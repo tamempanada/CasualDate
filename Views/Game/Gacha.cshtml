@@ -1,0 +1,81 @@
+@model CasualDate.ViewModels.Player.GachaGameViewModel
+
+@{
+    ViewData["Title"] = "Girlfriend Gacha";
+}
+
+<section class="feature-page gacha-page">
+    <p class="eyebrow">Mini-game 5</p>
+    <h1>Girlfriend Gacha</h1>
+    <p class="soft-copy">Spend tokens, reveal tiny rewards, then choose what to keep or discard for a rarity refund.</p>
+
+    <div class="gacha-banner">
+        @if (!string.IsNullOrWhiteSpace(Model.BannerImagePath))
+        {
+            <img src="@Model.BannerImagePath" alt="Girlfriend Gacha banner" />
+        }
+        else
+        {
+            <div class="gacha-banner-fallback">
+                <span>Girlfriend Gacha</span>
+                <strong>Collect sweet rewards</strong>
+            </div>
+        }
+    </div>
+
+    <div class="gacha-layout" data-gacha-root>
+        <div class="gacha-machine-card">
+            <div class="gacha-economy">
+                <span>Balance <strong data-gacha-balance>0</strong></span>
+                <span>Legendary pity <strong data-gacha-pity>0/90</strong></span>
+            </div>
+            <div class="gacha-machine-art" aria-hidden="true">
+                <img src="~/images/gacha/gashapon-machine.png" alt="" />
+            </div>
+            <div class="gacha-pull-actions">
+                <button class="primary-button" type="button" data-gacha-pull="1">1 Pull · 5 tokens</button>
+                <button class="secondary-button" type="button" data-gacha-pull="10">10 Pulls · 50 tokens</button>
+            </div>
+            <p class="soft-copy">A 10-pull guarantees at least one Epic or Legendary. Legendary pity guarantees one by 90 pulls.</p>
+            <p class="gacha-status" data-gacha-status>Ready when you are.</p>
+            <div class="gacha-nav-actions">
+                <a class="secondary-button" asp-controller="Game" asp-action="GachaCollection">Collection</a>
+                <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+            </div>
+        </div>
+
+        <div class="gacha-reveal-card" data-gacha-reveal hidden>
+            <p class="eyebrow">Capsule opened</p>
+            <div class="gacha-results" data-gacha-results></div>
+        </div>
+    </div>
+
+    <div class="gacha-discard-dialog" data-gacha-discard-dialog hidden>
+        <div class="gacha-discard-card" role="dialog" aria-modal="true" aria-labelledby="gachaDiscardTitle">
+            <p class="eyebrow">Confirm discard</p>
+            <h2 id="gachaDiscardTitle" data-discard-title>Discard reward?</h2>
+            <p data-discard-message></p>
+            <div class="admin-actions">
+                <button class="primary-button" type="button" data-discard-confirm>Confirm Discard</button>
+                <button class="secondary-button" type="button" data-discard-cancel>Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="gacha-reward-dialog" data-gacha-reward-dialog hidden>
+        <div class="gacha-reward-dialog-card" role="dialog" aria-modal="true" aria-labelledby="gachaRewardTitle">
+            <button class="gacha-dialog-close" type="button" data-reward-close aria-label="Close reward">×</button>
+            <p class="eyebrow">Capsule opened</p>
+            <h2 id="gachaRewardTitle">Your reward</h2>
+            <div data-opened-reward></div>
+            <div class="admin-actions">
+                <button class="primary-button" type="button" data-reward-keep>Keep Reward</button>
+                <button class="secondary-button" type="button" data-reward-discard>Discard Reward</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/gacha.js" asp-append-version="true"></script>
+}

@@ -11,4 +11,6 @@ public class MenuGameViewModel
     public string IconLabel { get; set; } = "";
 
     public string ActionName { get; set; } = "";
+
+    public bool IsCompletionGame { get; set; }
 }

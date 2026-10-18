@@ -1,0 +1,55 @@
+@model CasualDate.ViewModels.Player.PlayerWalletViewModel
+
+@{
+    ViewData["Title"] = "Wallet";
+}
+
+<section class="feature-page player-wallet-page">
+    <p class="eyebrow">Your wallet</p>
+    <h1>@Model.TokenBalance tokens</h1>
+    <p class="soft-copy">Track rewards, Blackjack bets, and payouts saved to your player account.</p>
+
+    <div class="player-wallet-layout">
+        <aside class="player-wallet-card">
+            <p class="eyebrow">Signed in as</p>
+            <h2>@Model.DisplayName</h2>
+            <div class="player-wallet-balance">
+                <span>Current balance</span>
+                <strong>@Model.TokenBalance</strong>
+            </div>
+            <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+        </aside>
+
+        <div class="player-wallet-ledger">
+            <div class="section-heading-row">
+                <div>
+                    <p class="eyebrow">Ledger</p>
+                    <h2>Recent Activity</h2>
+                </div>
+            </div>
+
+            @if (Model.Transactions.Count == 0)
+            {
+                <p class="soft-copy">No wallet activity yet. Complete a game or play Blackjack to start the ledger.</p>
+            }
+            else
+            {
+                <div class="player-transaction-list">
+                    @foreach (var transaction in Model.Transactions)
+                    {
+                        <article class="player-transaction-card">
+                            <div>
+                                <strong>@transaction.Description</strong>
+                                <span>@transaction.TransactionType · @transaction.CreatedAt.ToLocalTime().ToString("MMM d, h:mm tt")</span>
+                            </div>
+                            <div>
+                                <em class="@(transaction.Amount >= 0 ? "wallet-positive" : "wallet-negative")">@transaction.Amount</em>
+                                <small>Balance @transaction.BalanceAfter</small>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>

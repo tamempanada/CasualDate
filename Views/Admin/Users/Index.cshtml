@@ -6,8 +6,8 @@
 
 <section class="admin-shell">
     <p class="eyebrow">SuperAdmin</p>
-    <h1>Admin Users</h1>
-    <p class="soft-copy">Create accounts for trusted people who can sign in to the admin dashboard.</p>
+    <h1>Accounts</h1>
+    <p class="soft-copy">Create admin accounts for editors and player accounts for people who need saved progress.</p>
 
     @if (TempData["StatusMessage"] is string statusMessage)
     {
@@ -15,7 +15,7 @@
     }
 
     <div class="admin-actions">
-        <a class="primary-button" asp-controller="Users" asp-action="Create">Create Admin</a>
+        <a class="primary-button" asp-controller="Users" asp-action="Create">Create Account</a>
         <a class="secondary-button" href="/admin">Back to Dashboard</a>
     </div>
 
@@ -24,6 +24,7 @@
             <thead>
                 <tr>
                     <th>Email</th>
+                    <th>Type</th>
                     <th>SuperAdmin</th>
                     <th></th>
                 </tr>
@@ -33,12 +34,20 @@
                 {
                     <tr>
                         <td>@user.Email</td>
+                        <td>@user.AccountType</td>
                         <td>@(user.IsSuperAdmin ? "Yes" : "No")</td>
                         <td class="table-actions">
-                            <form asp-controller="Users" asp-action="ToggleSuperAdmin" asp-route-id="@user.Id" method="post">
-                                @Html.AntiForgeryToken()
-                                <button type="submit">@(user.IsSuperAdmin ? "Remove SuperAdmin" : "Make SuperAdmin")</button>
-                            </form>
+                            @if (user.AccountType == "Admin")
+                            {
+                                <form asp-controller="Users" asp-action="ToggleSuperAdmin" asp-route-id="@user.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit">@(user.IsSuperAdmin ? "Remove SuperAdmin" : "Make SuperAdmin")</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span>Player login only</span>
+                            }
                         </td>
                     </tr>
                 }

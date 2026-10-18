@@ -17,5 +17,8 @@ public class AdminUserCreateViewModel
     [Compare(nameof(Password))]
     public string ConfirmPassword { get; set; } = "";
 
+    [Required]
+    public string AccountType { get; set; } = "Player";
+
     public bool IsSuperAdmin { get; set; }
 }

@@ -10,5 +10,15 @@ public class MenuViewModel
 
     public string SecondaryColor { get; set; } = "#7bb8a5";
 
+    public int TokenBalance { get; set; }
+
+    public bool IsPlayerSignedIn { get; set; }
+
+    public string? CompanionName { get; set; }
+
+    public string? CompanionImagePath { get; set; }
+
+    public bool CompanionIsLegendary { get; set; }
+
     public List<MenuGameViewModel> Games { get; set; } = [];
 }

@@ -57,7 +57,7 @@
             <h2 id="photoboothCompletionHeading">@Model.CompletionHeading</h2>
             <img id="photoboothCompletionImage" alt="Completed photobooth strip" />
             <p id="photoboothCompletionSubheading">@Model.CompletionSubheading</p>
-            <button class="primary-button" type="button" data-complete-game="photobooth">
+            <button id="finishPhotoboothButton" class="primary-button" type="button">
                 Complete Photobooth
             </button>
         </div>
@@ -65,6 +65,7 @@
 </section>
 
 @section Scripts {
+    <script src="~/js/game-rewards.js" asp-append-version="true"></script>
     <script src="~/js/photobooth.js" asp-append-version="true"></script>
     <script src="~/js/player-progress.js" asp-append-version="true"></script>
 }

@@ -2,30 +2,56 @@
 
 @{
     ViewData["Title"] = "Menu";
+    var completionGames = Model.Games.Where(game => game.IsCompletionGame).ToList();
 }
 
-<section class="menu-screen"
-         aria-labelledby="menu-title"
-         style="--rose: @Model.PrimaryColor; --mint: @Model.SecondaryColor;">
+<section class="menu-screen" aria-labelledby="menu-title">
     <div class="menu-header">
         <div class="menu-title-block">
             <p class="eyebrow">@Model.WelcomeMessage</p>
             <h1 id="menu-title">@Model.GameTitle</h1>
             <p class="menu-subtitle">Choose the next little chapter and keep the date moving.</p>
+            @if (!string.IsNullOrWhiteSpace(Model.CompanionName))
+            {
+                <div class="menu-companion @(Model.CompanionIsLegendary ? "is-legendary" : "")">
+                    @if (!string.IsNullOrWhiteSpace(Model.CompanionImagePath))
+                    {
+                        <img src="@Model.CompanionImagePath" alt="@Model.CompanionName companion" />
+                    }
+                    else
+                    {
+                        <span aria-hidden="true">Doll</span>
+                    }
+                    <small>@Model.CompanionName is keeping you company.</small>
+                </div>
+            }
         </div>
 
         <div class="progress-panel" aria-label="Game progress">
             <div class="progress-copy">
                 <span>Your date</span>
-                <strong id="progressSummary">0 / @Model.Games.Count completed</strong>
+                <strong id="progressSummary">0 / @completionGames.Count completed</strong>
+            </div>
+            <div class="wallet-chip" aria-label="Shared token wallet">
+                <span>Tokens</span>
+                @if (Model.IsPlayerSignedIn)
+                {
+                    <a asp-controller="Player" asp-action="Wallet">
+                        <strong id="tokenBalance">@Model.TokenBalance</strong>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Player" asp-action="Login" asp-route-returnUrl="/Home/Menu">Log in</a>
+                }
             </div>
             <div class="progress-track" aria-hidden="true">
                 <span id="progressBar"></span>
             </div>
-            <div class="progress-dots" aria-hidden="true">
+            <div class="progress-dots" aria-label="Available mini-games">
                 @foreach (var game in Model.Games)
                 {
-                    <span data-progress-dot="@game.Slug"></span>
+                    <span class="@(game.IsCompletionGame ? "" : "feature")" data-progress-dot="@game.Slug" title="@game.Name"></span>
                 }
             </div>
             <p id="progressHint" class="progress-hint" aria-live="polite">Pick a mini-game to begin.</p>
@@ -45,7 +71,11 @@
         <div class="game-grid" aria-label="Mini-games">
             @foreach (var game in Model.Games)
             {
-                <a class="game-card" asp-controller="Game" asp-action="@game.ActionName" data-game-card="@game.Slug">
+                <a class="game-card"
+                   asp-controller="Game"
+                   asp-action="@game.ActionName"
+                   data-game-card="@(game.IsCompletionGame ? game.Slug : null)"
+                   data-feature-card="@(!game.IsCompletionGame ? game.Slug : null)">
                     <div class="game-card-top">
                         <span class="game-icon">@game.IconLabel</span>
                         <span class="next-game-label" hidden>Next up</span>
@@ -54,16 +84,34 @@
                         <strong>@game.Name</strong>
                         <small>@game.Description</small>
                     </div>
-                    <div class="game-card-footer">
-                        <em class="completion-label">Not completed</em>
-                        <span class="game-action-label">Play</span>
-                    </div>
+                    @if (game.IsCompletionGame)
+                    {
+                        <div class="game-card-footer">
+                            <em class="completion-label">Not completed</em>
+                            <span class="game-action-label">Play</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="game-card-footer">
+                            <em class="completion-label">Feature</em>
+                            <span class="game-action-label">Open</span>
+                        </div>
+                    }
                 </a>
             }
         </div>
     }
 
     <div class="menu-actions">
+        @if (Model.IsPlayerSignedIn)
+        {
+            <a class="secondary-button" asp-controller="Customize" asp-action="Index">Customize</a>
+        }
+        else
+        {
+            <a class="secondary-button" asp-controller="Player" asp-action="Login" asp-route-returnUrl="/customize">Customize</a>
+        }
         <a id="finalRewardLink" class="final-reward-link locked" asp-controller="Game" asp-action="Final" aria-disabled="true">
             <span>Final reward</span>
             <strong id="finalRewardText">Complete every game to unlock this.</strong>

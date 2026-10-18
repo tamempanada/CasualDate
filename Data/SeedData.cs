@@ -14,6 +14,7 @@ public static class SeedData
 
         const string adminRole = "Admin";
         const string superAdminRole = "SuperAdmin";
+        const string playerRole = "Player";
 
         if (!await roleManager.RoleExistsAsync(adminRole))
         {
@@ -23,6 +24,11 @@ public static class SeedData
         if (!await roleManager.RoleExistsAsync(superAdminRole))
         {
             await roleManager.CreateAsync(new IdentityRole(superAdminRole));
+        }
+
+        if (!await roleManager.RoleExistsAsync(playerRole))
+        {
+            await roleManager.CreateAsync(new IdentityRole(playerRole));
         }
 
         var email = configuration["SeedAdmin:Email"];

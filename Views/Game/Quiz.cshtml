@@ -30,7 +30,7 @@
             @for (var index = 0; index < Model.Questions.Count; index++)
             {
                 var question = Model.Questions[index];
-                <article class="quiz-question @(index == 0 ? "active" : "")" data-quiz-question="@index" data-question-points="@question.Points">
+                <article class="quiz-question @(index == 0 ? "active" : "")" data-quiz-question="@index" data-question-id="@question.Id" data-question-points="@question.Points">
                     <div class="quiz-question-meta">
                         <span>@question.Difficulty</span>
                         <span>@question.Points points</span>
@@ -43,7 +43,7 @@
                     <div class="quiz-answers">
                         @foreach (var answer in question.Answers)
                         {
-                            <button class="quiz-answer" type="button" data-answer-correct="@answer.IsCorrect.ToString().ToLowerInvariant()">
+                            <button class="quiz-answer" type="button" data-answer-id="@answer.Id">
                                 @if (!string.IsNullOrWhiteSpace(answer.ImagePath))
                                 {
                                     <img src="@Url.Content(answer.ImagePath)" alt="" loading="lazy" onerror="this.remove()" />
@@ -64,7 +64,7 @@
                     </strong>
                     <img id="quizResultImage" class="result-image" alt="" hidden />
                     <p id="quizResultMessage"></p>
-                    <button id="completeQuizButton" class="primary-button" type="button" data-complete-game="quiz">
+                    <button id="completeQuizButton" class="primary-button" type="button" data-complete-game="quiz" data-skip-completion-reward="true">
                         Complete Quiz
                     </button>
                 </div>

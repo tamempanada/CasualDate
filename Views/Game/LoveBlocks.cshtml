@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "Love Blocks";
+}
+
+<section class="feature-page love-blocks-page" data-love-blocks-root>
+    <p class="eyebrow">Mini-game 6</p>
+    <h1>Love Blocks</h1>
+    <p class="soft-copy">Place the pieces, clear the board, and beat your high score.</p>
+    @Html.AntiForgeryToken()
+
+    <div class="love-blocks-layout">
+        <section class="love-blocks-board-panel" aria-label="Love Blocks game board">
+            <div class="love-blocks-stats">
+                <div><span>Score</span><strong data-lb-score>0</strong></div>
+                <div><span>Best</span><strong data-lb-best>0</strong></div>
+                <div><span>Lines</span><strong data-lb-lines>0</strong></div>
+                <div><span>Moves</span><strong data-lb-moves>0</strong></div>
+            </div>
+            <div class="love-blocks-board" data-lb-board role="grid" aria-label="8 by 8 puzzle board"></div>
+            <p class="love-blocks-status" data-lb-status aria-live="polite">Loading your board...</p>
+        </section>
+
+        <aside class="love-blocks-side-panel">
+            <h2>Your pieces</h2>
+            <p class="soft-copy">Select a piece, then tap an open board cell. You can also drag it into place.</p>
+            <div class="love-blocks-pieces" data-lb-pieces></div>
+            <section class="love-blocks-rewards" aria-label="Coin reward progress">
+                <h2>Run rewards</h2>
+                <p><strong data-lb-earned>0</strong> tokens awarded this run</p>
+                <p>Wallet balance: <strong data-lb-balance>0</strong> tokens</p>
+                <div><span>Next score milestone</span><strong data-lb-score-progress>--</strong></div>
+                <div><span>Next line milestone</span><strong data-lb-line-progress>--</strong></div>
+            </section>
+            <div class="love-blocks-actions">
+                <button class="primary-button" type="button" data-lb-new-run>New Game</button>
+                <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+            </div>
+        </aside>
+    </div>
+
+    <dialog class="love-blocks-result" data-lb-result aria-labelledby="lb-result-title">
+        <div class="love-blocks-result-card">
+            <p class="eyebrow">Board complete</p>
+            <h2 id="lb-result-title">Lovely run!</h2>
+            <p>Final score <strong data-lb-final-score>0</strong></p>
+            <p>Personal best <strong data-lb-final-best>0</strong></p>
+            <p>Lines cleared <strong data-lb-final-lines>0</strong></p>
+            <p>Moves made <strong data-lb-final-moves>0</strong></p>
+            <p>Tokens awarded <strong data-lb-final-earned>0</strong></p>
+            <div class="love-blocks-actions">
+                <button class="primary-button" type="button" data-lb-play-again>Play Again</button>
+                <a class="secondary-button" asp-controller="Home" asp-action="Menu">Main Menu</a>
+            </div>
+        </div>
+    </dialog>
+</section>
+
+@section Scripts {
+    <script src="~/js/love-blocks.js" asp-append-version="true"></script>
+}

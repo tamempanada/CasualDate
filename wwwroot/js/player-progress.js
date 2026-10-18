@@ -13,6 +13,34 @@ function saveProgress(progress) {
   window.localStorage.setItem(progressKey, JSON.stringify(progress));
 }
 
+async function refreshWalletBalance(balance) {
+  const tokenBalance = document.querySelector("#tokenBalance");
+
+  if (!tokenBalance) {
+    return;
+  }
+
+  if (Number.isFinite(balance)) {
+    tokenBalance.textContent = String(balance);
+    return;
+  }
+
+  try {
+    const response = await fetch("/player/wallet-summary", {
+      headers: { "Accept": "application/json" }
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const wallet = await response.json();
+    tokenBalance.textContent = String(wallet.balance ?? 0);
+  } catch {
+    // Wallet display is helpful, but it should not block existing game progress.
+  }
+}
+
 function updateMenuProgress() {
   const progress = getProgress();
   const completedCount = gameIds.filter((id) => progress[id]?.completed).length;
@@ -144,25 +172,35 @@ function navigateToMenu() {
   window.location.href = "/Home/Menu";
 }
 
+async function completeGame(button, gameId, options = {}) {
+  const progress = getProgress();
+  button.disabled = true;
+  const reward = options.reward ?? null;
+
+  progress[gameId] = {
+    completed: true,
+    completedAt: new Date().toISOString()
+  };
+
+  saveProgress(progress);
+  button.textContent = reward?.awarded && reward.amount > 0
+    ? `Completed +${reward.amount} tokens`
+    : "Completed";
+  showCompletionNotice(button);
+  await refreshWalletBalance(reward?.balance);
+  updateMenuProgress();
+
+  window.setTimeout(() => {
+    navigateToMenu();
+  }, 900);
+}
+
+window.CasualDatePlayerProgress = { completeGame };
+
 document.querySelectorAll("[data-complete-game]").forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", async () => {
     const gameId = button.getAttribute("data-complete-game");
-    const progress = getProgress();
-
-    progress[gameId] = {
-      completed: true,
-      completedAt: new Date().toISOString()
-    };
-
-    saveProgress(progress);
-    button.textContent = "Completed";
-    button.disabled = true;
-    showCompletionNotice(button);
-    updateMenuProgress();
-
-    window.setTimeout(() => {
-      navigateToMenu();
-    }, 900);
+    await completeGame(button, gameId);
   });
 });
 
@@ -186,3 +224,4 @@ document.querySelector("#replayDateButton")?.addEventListener("click", () => {
 
 updateMenuProgress();
 updateFinalReward();
+refreshWalletBalance();

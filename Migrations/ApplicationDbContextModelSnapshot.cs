@@ -89,6 +89,64 @@ namespace CasualDate.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("CasualDate.Models.BlackjackRound", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BetAmount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DealerHandJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DeckJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("PayoutAmount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PlayerHandJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RoundToken")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoundToken")
+                        .IsUnique();
+
+                    b.HasIndex("PlayerProfileId", "Status");
+
+                    b.ToTable("BlackjackRounds");
+                });
+
             modelBuilder.Entity("CasualDate.Models.CakeItem", b =>
                 {
                     b.Property<int>("Id")
@@ -277,6 +335,309 @@ namespace CasualDate.Migrations
                     b.ToTable("DateOptions");
                 });
 
+            modelBuilder.Entity("CasualDate.Models.GachaCollectionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FirstKeptAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("GachaRewardId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastKeptAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SnapshotDescription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("SnapshotImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("SnapshotLetterContent")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SnapshotLetterTitle")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<string>("SnapshotName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<string>("SnapshotRarity")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<string>("SnapshotRewardType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GachaRewardId");
+
+                    b.HasIndex("PlayerProfileId", "GachaRewardId")
+                        .IsUnique();
+
+                    b.ToTable("GachaCollectionItems");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaPityState", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("LegendaryPityCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerProfileId")
+                        .IsUnique();
+
+                    b.ToTable("GachaPityStates");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaPull", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("GachaPullBatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GachaRewardId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPityGuaranteed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsTenPullGuaranteed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PullToken")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int>("RefundAmount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GachaPullBatchId");
+
+                    b.HasIndex("GachaRewardId");
+
+                    b.HasIndex("PlayerProfileId");
+
+                    b.HasIndex("PullToken")
+                        .IsUnique();
+
+                    b.ToTable("GachaPulls");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaPullBatch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BatchToken")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PullCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestToken")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int>("TokenCost")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BatchToken")
+                        .IsUnique();
+
+                    b.HasIndex("PlayerProfileId", "RequestToken")
+                        .IsUnique();
+
+                    b.ToTable("GachaPullBatches");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaReward", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BuiltInCosmeticId")
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LetterContent")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LetterTitle")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<int?>("MediaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<int>("Rarity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RewardType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuiltInCosmeticId")
+                        .IsUnique();
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("GachaRewards");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GameCompletionAttempt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AttemptToken")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int>("CaptureCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("GameSlug")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ResultRangeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttemptToken")
+                        .IsUnique();
+
+                    b.HasIndex("PlayerProfileId", "GameSlug", "Status");
+
+                    b.ToTable("GameCompletionAttempts");
+                });
+
             modelBuilder.Entity("CasualDate.Models.GameSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -299,6 +660,9 @@ namespace CasualDate.Migrations
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("varchar(160)");
+
+                    b.Property<int?>("GachaBannerMediaId")
+                        .HasColumnType("int");
 
                     b.Property<string>("GameTitle")
                         .IsRequired()
@@ -325,16 +689,6 @@ namespace CasualDate.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("PhotoboothCompletionHeading")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("varchar(160)");
-
-                    b.Property<string>("PhotoboothCompletionSubheading")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
                     b.Property<int?>("MusicMediaId")
                         .HasColumnType("int");
 
@@ -349,6 +703,16 @@ namespace CasualDate.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("varchar(40)");
+
+                    b.Property<string>("PhotoboothCompletionHeading")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<string>("PhotoboothCompletionSubheading")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("PlayerName")
                         .IsRequired()
@@ -404,6 +768,168 @@ namespace CasualDate.Migrations
                             YesButtonGrowthRate = 0.28m,
                             YesButtonText = "YES"
                         });
+                });
+
+            modelBuilder.Entity("CasualDate.Models.HangmanProgress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdventureCompletedLevels")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<int>("AdventureUnlockedLevel")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EndlessBestStreak")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EndlessTotalWins")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerProfileId")
+                        .IsUnique();
+
+                    b.ToTable("HangmanProgresses");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.LoveBlocksPlayerRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BestScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerProfileId")
+                        .IsUnique();
+
+                    b.ToTable("LoveBlocksPlayerRecords");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.LoveBlocksRun", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BestRewardAmount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("BestRewardEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Board")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsOver")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LastRequestId")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int>("LineMilestonesAwarded")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LineRewardAmount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("LineRewardEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("LineRewardInterval")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LinesCleared")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovesMade")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("PersonalBestRewarded")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("PiecesJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProcessedRequestIdsJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RunToken")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScoreMilestonesAwarded")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScoreRewardAmount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ScoreRewardEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("ScoreRewardInterval")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokensEarned")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RunToken")
+                        .IsUnique();
+
+                    b.HasIndex("PlayerProfileId", "IsOver");
+
+                    b.ToTable("LoveBlocksRuns");
                 });
 
             modelBuilder.Entity("CasualDate.Models.Message", b =>
@@ -552,7 +1078,141 @@ namespace CasualDate.Migrations
                             Name = "How Well Do You Know Me?",
                             Slug = "quiz",
                             UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Pull collectible dolls, letters, and posters.",
+                            DisplayOrder = 5,
+                            IconLabel = "Gacha",
+                            IsEnabled = true,
+                            Name = "Girlfriend Gacha",
+                            Slug = "gacha",
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Place the pieces, clear the board, and beat your high score.",
+                            DisplayOrder = 6,
+                            IconLabel = "Blocks",
+                            IsEnabled = true,
+                            Name = "Love Blocks",
+                            Slug = "love-blocks",
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Guess words across adventure and endless modes.",
+                            DisplayOrder = 7,
+                            IconLabel = "Word",
+                            IsEnabled = true,
+                            Name = "Hangman",
+                            Slug = "hangman",
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Play cards using your shared token wallet.",
+                            DisplayOrder = 8,
+                            IconLabel = "Cards",
+                            IsEnabled = true,
+                            Name = "Blackjack",
+                            Slug = "blackjack",
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
+                });
+
+            modelBuilder.Entity("CasualDate.Models.PlayerGameCompletion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("EventKey")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokenAmountAwarded")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerProfileId", "EventKey")
+                        .IsUnique();
+
+                    b.ToTable("PlayerGameCompletions");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.PlayerProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<int?>("EquippedCompanionRewardId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EquippedEffectId")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("EquippedMusicSkinId")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("EquippedThemeId")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int?>("SelectedMusicMediaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokenBalance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("PlayerProfiles");
                 });
 
             modelBuilder.Entity("CasualDate.Models.QuizAnswer", b =>
@@ -685,6 +1345,195 @@ namespace CasualDate.Migrations
                     b.HasIndex("MiniGameId");
 
                     b.ToTable("ResultRanges");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.ScrapbookPage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DateLabel")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<int>("FontSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PageDesign")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<int>("PageNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TextAlign")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("TextColor")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerProfileId", "PageNumber")
+                        .IsUnique();
+
+                    b.ToTable("ScrapbookPages");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.TokenRewardSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<string>("EventKey")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("TokenAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TriggerInterval")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventKey")
+                        .IsUnique();
+
+                    b.ToTable("TokenRewardSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Complete Photobooth",
+                            EventKey = "complete:photobooth",
+                            IsEnabled = true,
+                            TokenAmount = 20,
+                            TriggerInterval = 1,
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Complete Bake a Cake",
+                            EventKey = "complete:cake",
+                            IsEnabled = true,
+                            TokenAmount = 25,
+                            TriggerInterval = 1,
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Complete Perfect Date",
+                            EventKey = "complete:perfect-date",
+                            IsEnabled = true,
+                            TokenAmount = 35,
+                            TriggerInterval = 1,
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Complete Quiz",
+                            EventKey = "complete:quiz",
+                            IsEnabled = true,
+                            TokenAmount = 30,
+                            TriggerInterval = 1,
+                            UpdatedAt = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
+            modelBuilder.Entity("CasualDate.Models.TokenTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BalanceAfter")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("PlayerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenceKey")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerProfileId");
+
+                    b.ToTable("TokenTransactions");
                 });
 
             modelBuilder.Entity("CasualDate.Models.UploadedMedia", b =>
@@ -890,6 +1739,15 @@ namespace CasualDate.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CasualDate.Models.BlackjackRound", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CasualDate.Models.CakeItem", b =>
                 {
                     b.HasOne("CasualDate.Models.UploadedMedia", null)
@@ -935,6 +1793,111 @@ namespace CasualDate.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
+            modelBuilder.Entity("CasualDate.Models.GachaCollectionItem", b =>
+                {
+                    b.HasOne("CasualDate.Models.GachaReward", "Reward")
+                        .WithMany()
+                        .HasForeignKey("GachaRewardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reward");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaPityState", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaPull", b =>
+                {
+                    b.HasOne("CasualDate.Models.GachaPullBatch", "Batch")
+                        .WithMany()
+                        .HasForeignKey("GachaPullBatchId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CasualDate.Models.GachaReward", "Reward")
+                        .WithMany()
+                        .HasForeignKey("GachaRewardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+
+                    b.Navigation("Reward");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaPullBatch", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GachaReward", b =>
+                {
+                    b.HasOne("CasualDate.Models.UploadedMedia", "Media")
+                        .WithMany()
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("CasualDate.Models.GameCompletionAttempt", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.HangmanProgress", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.LoveBlocksPlayerRecord", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.LoveBlocksRun", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CasualDate.Models.Message", b =>
                 {
                     b.HasOne("CasualDate.Models.UploadedMedia", null)
@@ -946,6 +1909,24 @@ namespace CasualDate.Migrations
                         .WithMany()
                         .HasForeignKey("MiniGameId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CasualDate.Models.PlayerGameCompletion", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.PlayerProfile", b =>
+                {
+                    b.HasOne("CasualDate.Models.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("CasualDate.Models.PlayerProfile", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CasualDate.Models.QuizAnswer", b =>
@@ -980,6 +1961,24 @@ namespace CasualDate.Migrations
                     b.HasOne("CasualDate.Models.MiniGame", null)
                         .WithMany()
                         .HasForeignKey("MiniGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.ScrapbookPage", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CasualDate.Models.TokenTransaction", b =>
+                {
+                    b.HasOne("CasualDate.Models.PlayerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

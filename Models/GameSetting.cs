@@ -57,6 +57,8 @@ public class GameSetting
 
     public int? MusicMediaId { get; set; }
 
+    public int? GachaBannerMediaId { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

@@ -28,22 +28,55 @@ function showQuizQuestion(index) {
   updateQuizScore();
 }
 
-function selectQuizAnswer(button) {
+async function selectQuizAnswer(button) {
   const question = button.closest("[data-quiz-question]");
   const questionIndex = Number(question.dataset.quizQuestion);
-  const points = Number(question.dataset.questionPoints);
-  const isCorrect = button.dataset.answerCorrect === "true";
+  const questionId = Number(question.dataset.questionId);
+  const answerId = Number(button.dataset.answerId);
+
+  question.querySelectorAll(".quiz-answer").forEach((answer) => {
+    answer.disabled = true;
+  });
+
+  let data;
+  try {
+    const response = await fetch("/quiz/answer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId, answerId })
+    });
+
+    if (response.status === 401) {
+      window.location.href = `/player/login?returnUrl=${encodeURIComponent(window.location.pathname)}`;
+      return;
+    }
+
+    data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.message || "Quiz answer could not be checked.");
+    }
+  } catch (error) {
+    question.querySelectorAll(".quiz-answer").forEach((answer) => {
+      answer.disabled = false;
+    });
+    quizProgressTitle.textContent = error.message;
+    return;
+  }
 
   quizAnswers[questionIndex] = {
-    isCorrect,
-    points: isCorrect ? points : 0
+    isCorrect: Boolean(data.isCorrect),
+    points: Number(data.points || 0)
   };
 
   question.querySelectorAll(".quiz-answer").forEach((answer) => {
     answer.classList.toggle("selected", answer === button);
   });
 
-  updateQuizScore();
+  if (data.reward?.awarded && data.reward.amount > 0) {
+    quizProgressTitle.textContent = `Correct! +${data.reward.amount} tokens`;
+  } else {
+    updateQuizScore();
+  }
 }
 
 function getCurrentQuizScore() {

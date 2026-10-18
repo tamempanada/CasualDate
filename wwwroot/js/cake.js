@@ -109,7 +109,7 @@ function decorationSymbol(name) {
   return "★ ★ ★";
 }
 
-function finishCake() {
+async function finishCake() {
   const required = ["base", "frosting", "topping", "decoration"];
   const missing = required.find((key) => !choices[key]);
 
@@ -118,13 +118,34 @@ function finishCake() {
     return;
   }
 
-  const score = Math.min(100, required.reduce((total, key) => total + choices[key].score, 0));
-  const result = getCakeResult(score);
+  nextButton.disabled = true;
+  let completion;
+  try {
+    completion = await window.CasualDateGameRewards.complete("cake", {
+      baseId: choices.base.id,
+      frostingId: choices.frosting.id,
+      toppingId: choices.topping.id,
+      decorationId: choices.decoration.id
+    });
+  } catch (error) {
+    nextButton.textContent = error.message;
+    nextButton.disabled = false;
+    return;
+  }
+
+  if (!completion?.result) {
+    nextButton.textContent = "Try again";
+    nextButton.disabled = false;
+    return;
+  }
+
+  const score = completion.score;
+  const result = completion.result;
 
   resultTitle.textContent = result.Title || result.title;
   resultMessage.textContent = result.Message || result.message;
   animateNumber(cakeAnimatedScore, score);
-  showResultImage(resultImage, result.ImagePath || result.imagePath);
+  showResultImage(resultImage, result.imagePath);
   updateCakeResultPreview();
   cakeSummary.innerHTML = "";
 
@@ -297,7 +318,7 @@ document.querySelectorAll(".cake-option").forEach((button) => {
 previousButton?.addEventListener("click", () => showStep(currentStep - 1));
 nextButton?.addEventListener("click", () => {
   if (currentStep === cakeSteps.length - 1) {
-    finishCake();
+    void finishCake();
     return;
   }
 

@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Hangman";
+}
+
+<section class="feature-page hangman-page">
+    <p class="eyebrow">Mini-game 7</p>
+    <h1>Hangman</h1>
+    <p class="soft-copy">Guess the word with on-screen letters or your keyboard. Adventure progress saves to your player profile.</p>
+
+    <div class="hangman-shell" data-hangman-root>
+        <aside class="hangman-panel">
+            <div>
+                <p class="eyebrow">Mode</p>
+                <h2>Choose a run</h2>
+            </div>
+            <div class="hangman-mode-buttons">
+                <button class="primary-button" type="button" data-mode="adventure">Adventure</button>
+                <button class="secondary-button" type="button" data-mode="endless">Endless</button>
+            </div>
+            <div class="hangman-level-grid" data-level-grid></div>
+            <div class="hangman-stats">
+                <span>Unlocked <strong data-unlocked-level>1</strong>/15</span>
+                <span>Endless wins <strong data-endless-wins>0</strong></span>
+                <span>Best streak <strong data-best-streak>0</strong></span>
+            </div>
+            <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+        </aside>
+
+        <div class="hangman-stage">
+            <div class="hangman-art" aria-hidden="true">
+                <div class="hangman-frame"></div>
+                <div class="hangman-person" data-hangman-person>
+                    <img class="head" src="~/images/hangman/player-head.png" alt="" />
+                    <span class="body"></span>
+                    <span class="arm-left"></span>
+                    <span class="arm-right"></span>
+                    <span class="leg-left"></span>
+                    <span class="leg-right"></span>
+                </div>
+            </div>
+            <div class="hangman-info">
+                <p class="eyebrow" data-run-label>Adventure</p>
+                <h2 data-prompt>Pick a level to begin.</h2>
+                <div class="hangman-word" data-word-display></div>
+                <p class="hangman-message" data-message>Use the level buttons or start Endless.</p>
+                <div class="hangman-meta">
+                    <span>Wrong guesses: <strong data-misses>0</strong>/6</span>
+                    <span>Streak: <strong data-streak>0</strong></span>
+                </div>
+                <div class="hangman-actions">
+                    <button class="primary-button" type="button" data-replay>Replay</button>
+                    <button class="secondary-button" type="button" data-next-word>Next</button>
+                </div>
+                <div class="hangman-keyboard" data-keyboard></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/hangman-words.js" asp-append-version="true"></script>
+    <script src="~/js/hangman.js" asp-append-version="true"></script>
+}

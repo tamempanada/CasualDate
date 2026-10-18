@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Scrapbook Diary";
+}
+
+<section class="feature-page scrapbook-page">
+    <p class="eyebrow">Mini-game 6</p>
+    <h1>Scrapbook Diary</h1>
+    <p class="soft-copy">A private writing-only diary with saved pages, soft paper styles, and gentle autosave.</p>
+
+    <div class="scrapbook-shell" data-scrapbook-root>
+        <aside class="scrapbook-sidebar">
+            <div>
+                <p class="eyebrow">Pages</p>
+                <h2>Your book</h2>
+            </div>
+            <div class="scrapbook-page-tabs" data-scrapbook-tabs>
+                <p class="soft-copy">Loading pages...</p>
+            </div>
+            <div class="scrapbook-navigation">
+                <button class="secondary-button" type="button" data-scrapbook-prev>Previous</button>
+                <button class="secondary-button" type="button" data-scrapbook-next>Next</button>
+            </div>
+            <a class="secondary-button" asp-controller="Home" asp-action="Menu">Back to Menu</a>
+        </aside>
+
+        <article class="scrapbook-editor">
+            <div class="scrapbook-toolbar">
+                <label>
+                    <span>Paper</span>
+                    <select data-scrapbook-design>
+                        <option value="lined">Lined</option>
+                        <option value="blank">Blank</option>
+                        <option value="dotted">Dotted</option>
+                        <option value="floral">Floral</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Size</span>
+                    <input data-scrapbook-font-size type="range" min="14" max="28" step="1" value="18" />
+                </label>
+                <label>
+                    <span>Color</span>
+                    <input data-scrapbook-color type="color" value="#3a2724" />
+                </label>
+                <label>
+                    <span>Align</span>
+                    <select data-scrapbook-align>
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                    </select>
+                </label>
+                <span class="scrapbook-save-status" data-scrapbook-status>Loading...</span>
+            </div>
+
+            <div class="scrapbook-paper is-lined" data-scrapbook-paper>
+                <input class="scrapbook-title-input" data-scrapbook-title maxlength="120" placeholder="Page title" />
+                <input class="scrapbook-date-input" data-scrapbook-date maxlength="80" placeholder="Date or tiny label" />
+                <textarea class="scrapbook-body-input" data-scrapbook-body placeholder="Write something here."></textarea>
+            </div>
+        </article>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/scrapbook.js" asp-append-version="true"></script>
+}

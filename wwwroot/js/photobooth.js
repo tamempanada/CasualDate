@@ -11,6 +11,7 @@ const useFallbackButton = document.querySelector("#useFallbackButton");
 const downloadStripButton = document.querySelector("#downloadStripButton");
 const retakeStripButton = document.querySelector("#retakeStripButton");
 const completePhotoboothButton = document.querySelector("#completePhotoboothButton");
+const finishPhotoboothButton = document.querySelector("#finishPhotoboothButton");
 const photoboothCompletion = document.querySelector("#photoboothCompletion");
 const photoboothCompletionImage = document.querySelector("#photoboothCompletionImage");
 const photoboothCompletionHeading = document.querySelector("#photoboothCompletionHeading");
@@ -31,6 +32,7 @@ const photos = [];
 let stream = null;
 let isCapturing = false;
 let stripRenderId = 0;
+let serverCapturedPhotoCount = 0;
 
 function loadImage(source) {
   return new Promise((resolve, reject) => {
@@ -105,6 +107,13 @@ async function startCamera() {
     cameraFallback.hidden = true;
     takePhotoButton.disabled = false;
     setStatus("Camera ready. Take the first photo when you are ready.");
+
+    try {
+      await window.CasualDateGameRewards?.startAttempt("photobooth", true);
+    } catch {
+      // Camera capture must remain available even when optional token verification is unavailable.
+      setStatus("Camera ready. Take photos normally; token verification is temporarily unavailable.");
+    }
   } catch {
     showFallback("Camera permission was denied or unavailable.");
   }
@@ -154,6 +163,14 @@ async function takePhoto() {
   await runCountdown();
 
   photos.push(captureFromVideo());
+  try {
+    const capture = await window.CasualDateGameRewards?.registerPhotoboothCapture();
+    if (capture?.succeeded) {
+      serverCapturedPhotoCount = capture.captureCount;
+    }
+  } catch {
+    setStatus("Photo captured, but its token eligibility could not be verified. You can still save your strip.");
+  }
   updateSlots();
   await drawStrip();
 
@@ -300,6 +317,12 @@ async function resetPhotobooth() {
 
   if (stream) {
     takePhotoButton.disabled = false;
+    serverCapturedPhotoCount = 0;
+    try {
+      await window.CasualDateGameRewards?.startAttempt("photobooth", true);
+    } catch {
+      // The strip remains usable even if its optional token verification cannot start.
+    }
   }
 
   setStatus(stream ? "Ready for a new strip." : "Ready for placeholder mode or camera access.");
@@ -334,6 +357,33 @@ useFallbackButton?.addEventListener("click", fillWithPlaceholders);
 downloadStripButton?.addEventListener("click", downloadStrip);
 retakeStripButton?.addEventListener("click", resetPhotobooth);
 completePhotoboothButton?.addEventListener("click", showPhotoboothCompletion);
+finishPhotoboothButton?.addEventListener("click", async () => {
+  if (finishPhotoboothButton.disabled) {
+    return;
+  }
+
+  finishPhotoboothButton.disabled = true;
+  let reward = null;
+
+  if (serverCapturedPhotoCount >= photoCount) {
+    try {
+      const completion = await window.CasualDateGameRewards?.completePhotobooth();
+      reward = completion?.reward || null;
+      if (reward?.awarded) {
+        setStatus(`Photobooth complete. +${reward.amount} tokens awarded.`);
+      }
+    } catch (error) {
+      setStatus(error.message || "Your strip is complete, but its token reward could not be verified.");
+    }
+  } else {
+    setStatus("Photobooth complete. Placeholder photos do not earn tokens.");
+  }
+
+  await window.CasualDatePlayerProgress?.completeGame(finishPhotoboothButton, "photobooth", {
+    skipReward: true,
+    reward
+  });
+});
 
 function stopPhotoboothStream() {
   stream?.getTracks().forEach((track) => track.stop());

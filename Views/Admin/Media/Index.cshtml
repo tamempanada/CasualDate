@@ -17,6 +17,12 @@
         .Where(media => media.MediaType == CasualDate.Models.MediaType.Image
             && (!fileExists.TryGetValue(media.Id, out var imageExists) || imageExists))
         .ToDictionary(media => media.Id, media => Url.Content(media.FilePath));
+    var categories = Model
+        .Select(media => media.Category?.Trim())
+        .Where(category => !string.IsNullOrWhiteSpace(category))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(category => category)
+        .ToList();
 }
 
 <section class="admin-shell">
@@ -74,6 +80,34 @@
             <span>Search media</span>
             <input id="mediaSearchInput" type="search" placeholder="Search media..." autocomplete="off" />
         </label>
+        <label class="media-filter-select">
+            <span>Category</span>
+            <select data-media-category-filter>
+                <option value="">All categories</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category">@category</option>
+                }
+            </select>
+        </label>
+        <label class="media-filter-select">
+            <span>Game</span>
+            <select data-media-game-filter>
+                <option value="">All games</option>
+                @foreach (var game in miniGames.Where(game => !string.IsNullOrWhiteSpace(game.Value)))
+                {
+                    <option value="@game.Value">@game.Text</option>
+                }
+            </select>
+        </label>
+        <label class="media-filter-select">
+            <span>Sort</span>
+            <select data-media-sort>
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="name">Name A-Z</option>
+            </select>
+        </label>
     </div>
 
     <div class="media-grid" data-media-grid>
@@ -125,7 +159,11 @@
             <article class="media-card @(item.MediaType == CasualDate.Models.MediaType.Audio ? "music-media-card" : "")"
                      data-media-card
                      data-media-type="@organizerType"
-                     data-media-search="@searchText">
+                     data-media-search="@searchText"
+                     data-media-category="@item.Category"
+                     data-media-game="@item.MiniGameId"
+                     data-media-name="@item.DisplayName"
+                     data-media-created="@item.CreatedAt.Ticks">
                 @if (item.MediaType == CasualDate.Models.MediaType.Image)
                 {
                     @if (hasFile)
@@ -239,6 +277,7 @@
         }
     </div>
     <p class="media-empty-state" data-media-empty hidden>No media matches this view.</p>
+    <nav class="media-pagination" data-media-pagination aria-label="Media pages"></nav>
 </section>
 
 @section Scripts {

@@ -320,6 +320,16 @@ public class MediaController : Controller
             AddUsage(usageMap, usage.MediaId, $"Cake {usage.ItemType}: {DisplayText(usage.Name, "Item")}");
         }
 
+        var gachaUsages = await _context.GachaRewards
+            .Where(reward => reward.MediaId.HasValue && ids.Contains(reward.MediaId.Value))
+            .Select(reward => new { reward.MediaId, reward.Name, reward.RewardType })
+            .ToListAsync();
+
+        foreach (var usage in gachaUsages)
+        {
+            AddUsage(usageMap, usage.MediaId, $"Gacha {usage.RewardType}: {DisplayText(usage.Name, "Reward")}");
+        }
+
         var quizQuestionUsages = await _context.QuizQuestions
             .Where(question => question.MediaId.HasValue && ids.Contains(question.MediaId.Value))
             .Select(question => new { question.MediaId, question.QuestionText })

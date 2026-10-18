@@ -1,0 +1,165 @@
+@model CasualDate.ViewModels.Admin.WalletAdminViewModel
+
+@{
+    ViewData["Title"] = "Wallet";
+}
+
+<section class="admin-shell">
+    <p class="eyebrow">Admin</p>
+    <h1>Wallet</h1>
+    <p class="soft-copy">Review player token balances and recent wallet activity from completion rewards, Blackjack bets, and payouts.</p>
+
+    @if (TempData["StatusMessage"] is string statusMessage)
+    {
+        <p class="status-message">@statusMessage</p>
+    }
+
+    <div class="admin-actions">
+        <a class="secondary-button" href="/admin/token-rewards">Token Rewards</a>
+        <a class="secondary-button" href="/admin">Back to Dashboard</a>
+    </div>
+
+    <div class="wallet-admin-summary">
+        <article>
+            <span>Players</span>
+            <strong>@Model.Players.Count</strong>
+        </article>
+        <article>
+            <span>Total tokens</span>
+            <strong>@Model.Players.Sum(player => player.TokenBalance)</strong>
+        </article>
+        <article>
+            <span>Transactions shown</span>
+            <strong>@Model.Transactions.Count</strong>
+        </article>
+    </div>
+
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        <div class="admin-section-block">
+            <div class="section-heading-row">
+                <div>
+                    <p class="eyebrow">SuperAdmin</p>
+                    <h2>Manual Adjustment</h2>
+                </div>
+            </div>
+
+            <form class="admin-form wide-form wallet-adjust-form" asp-controller="Wallet" asp-action="Adjust" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <label asp-for="Adjustment.PlayerProfileId">Player</label>
+                <select asp-for="Adjustment.PlayerProfileId">
+                    <option value="0">Choose player</option>
+                    @foreach (var player in Model.Players)
+                    {
+                        <option value="@player.PlayerProfileId">@player.Email (@player.TokenBalance tokens)</option>
+                    }
+                </select>
+                <span asp-validation-for="Adjustment.PlayerProfileId"></span>
+
+                <label asp-for="Adjustment.Amount">Amount</label>
+                <input asp-for="Adjustment.Amount" type="number" min="-10000" max="10000" />
+                <small class="field-hint">Use a positive amount to add tokens, or a negative amount to deduct. Balance cannot go below zero.</small>
+                <span asp-validation-for="Adjustment.Amount"></span>
+
+                <label asp-for="Adjustment.Reason">Reason</label>
+                <input asp-for="Adjustment.Reason" maxlength="180" placeholder="Example: Testing Blackjack balance" />
+                <span asp-validation-for="Adjustment.Reason"></span>
+
+                <button class="primary-button" type="submit">Save Adjustment</button>
+            </form>
+        </div>
+    }
+
+    <div class="admin-section-block">
+        <div class="section-heading-row">
+            <div>
+                <p class="eyebrow">Balances</p>
+                <h2>Player Wallets</h2>
+            </div>
+        </div>
+
+        @if (Model.Players.Count == 0)
+        {
+            <p class="soft-copy">No player profiles have been created yet.</p>
+        }
+        else
+        {
+            <div class="table-shell">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Display name</th>
+                            <th>Balance</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var player in Model.Players)
+                        {
+                            <tr>
+                                <td>@player.Email</td>
+                                <td>@player.DisplayName</td>
+                                <td><strong>@player.TokenBalance</strong></td>
+                                <td>@player.UpdatedAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="admin-section-block">
+        <div class="section-heading-row">
+            <div>
+                <p class="eyebrow">Ledger</p>
+                <h2>Recent Transactions</h2>
+            </div>
+        </div>
+
+        @if (Model.Transactions.Count == 0)
+        {
+            <p class="soft-copy">No wallet transactions yet.</p>
+        }
+        else
+        {
+            <div class="table-shell">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Player</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Balance</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var transaction in Model.Transactions)
+                        {
+                            <tr>
+                                <td>@transaction.CreatedAt.ToLocalTime().ToString("MMM d, h:mm tt")</td>
+                                <td>@transaction.PlayerEmail</td>
+                                <td>@transaction.TransactionType</td>
+                                <td class="@(transaction.Amount >= 0 ? "wallet-positive" : "wallet-negative")">@transaction.Amount</td>
+                                <td>@transaction.BalanceAfter</td>
+                                <td>
+                                    <strong>@transaction.Description</strong>
+                                    <small>@transaction.ReferenceKey</small>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
